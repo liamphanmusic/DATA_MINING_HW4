@@ -1,0 +1,1360 @@
+---
+title: "HOMEWORK 3 - Creating Value Through Data Mining (S402010)"
+author: "Liam Phan"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::material :
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: true
+    highlight: tango
+    code_folding: hide
+---
+
+<style type="text/css">
+  body{
+  font-size: 8pt;
+}
+</style>
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, comment=FALSE, message=FALSE, error = FALSE)
+
+```
+
+# <span style="color: #1c6155;">Loading Packages</span> 
+
+```{r loading packages}
+
+library(data.table) # Efficient Dataframe 
+library(lubridate) # For Dates 
+library(tidyverse) # Multiple Package for Useful Data wrangling
+library(esquisse) # Intuitive plotting
+library(plyr) # Data splitting
+library(dplyr) # Data Wrangling
+library(ggplot2) # Plot Graphs
+library(naniar) # for NA exploration in Dataframe
+library(plotly) # Make ggplot2 Dynamic
+library(gridExtra) # Multiple Plot at once
+library(RColorBrewer) # For Color Palette
+library(rmdformats) # Theme of HTML
+library(flextable) # Show Table
+library(class) # K-NN
+library(summarytools) # Beautiful and Efficient Summary for Dataset
+library(pivottabler) # Pivot Table
+library(naivebayes) # Naive Bayes Function
+library(caret) # Confusion Matrix
+library(leaps) # Exhaustive Search
+library(forecast) # Predictions
+library(neuralnet) # Neural Network
+library(nnet) # Neural Network
+library(manipulateWidget) # Plotly Combiner
+library(rpart) # Regression Tree
+library(rpart.plot) # Plotting Regression Tree
+
+```
+
+
+# <span style="color: #1c6155;">Dataset Preparation</span> 
+
+```{r clean environment, include=FALSE}
+
+# Clean Environment
+rm(list = ls()) 
+
+```
+
+## Loading the dataset called "ToyotaCorolla.csv"
+
+```{r loading dataset}
+
+# Load the Dataset with Fread()
+ToyotaDT <- fread("DATA/ToyotaCorolla.csv")
+
+```
+
+
+<center>
+
+![](IMAGES/Table.png)
+
+</center>
+
+## Quick Preview
+
+```{r preview of dataset}
+
+# Preview of the Dataset
+DT::datatable(head(ToyotaDT,2))
+
+```
+
+
+
+> Dataset Description: The file ToyotaCorolla.csv contains data on used cars on sale during late summer of 2004 in the Netherlands. It has 1436 records containing detail on 38 attributes, including Price, Age, Kilometers, HP (Horse Power), and other specifications.
+
+
+```{r summary of dataset,results="asis"}
+
+dfSummary(ToyotaDT, 
+          plain.ascii  = FALSE, 
+          style        = "grid", 
+          graph.magnif = 0.75, 
+          valid.col    = FALSE,
+          tmp.img.dir  = "/tmp")
+
+```
+
+## Missing Variables Plot
+
+<center>
+
+```{r missing variable plot}
+
+# Missing Variables Plot for the Dataset
+gg_miss_var(ToyotaDT, show_pct = TRUE)
+
+```
+
+</center>
+
+
+> We can see that there is no missing values in our dataset ToyotaCorolla.csv . 
+
+
+# <span style="color: #1c6155;">Ex 6.4</span> 
+
+## Predicting Prices of Used Cars
+
+Split the data into training (50%), validation (30%), and test (20%) datasets.
+
+```{r splitting dataset, results='asis'}
+
+# Setting Seed
+set.seed(1)
+
+# Splitting Training and Validation and Test
+splitting <- sample(1:3,size=nrow(ToyotaDT),replace=TRUE,prob=c(0.5,0.3,0.2))
+Training <- ToyotaDT[splitting==1,]
+Validation <- ToyotaDT[splitting==2,]
+Test <- ToyotaDT[splitting==3,]
+
+# Checking if proportions are right
+Prop_Training <- (nrow(Training)/nrow(ToyotaDT))*100
+Prop_Validation <- (nrow(Validation)/nrow(ToyotaDT))*100
+Prop_Test <- (nrow(Test)/nrow(ToyotaDT))*100
+
+# Print Proportion
+paste("The Proportions are:", round(Prop_Training,2),"% In Training,",round(Prop_Validation,2),"% In Validation, and ",round(Prop_Test,2),"% In Test")
+
+
+```
+
+<br />
+
+### Run a multiple linear regression 
+
+with the outcome variable **Price** and predictor variables **Age_08**, **KM**, **Fuel_Type**, **HP**, **Automatic**, **Doors**, **Quarterly_Tax**, **Mfr_Guarantee**, **Guarantee_Period**, **Airco**, **Automatic_airco**, **CD_Player**, **Powered_Windows**, **Sport_Model**, and **Tow_Bar**. 
+
+<br />
+
+### Outcome Variable
+
+> **Numerical**: Price
+
+<br />
+
+### Explanatory Variables
+
+> **Numerical**: Age_08, KM, HP, Doors, Quarterly_Tax, Quarantee_Period
+
+> **Categorical/Dummy**: Fuel Type, Automatic, Mfr_Guarantee, Airco, Automatic_airco, CD_Player, Powered Windows, Sport_Model, Tow_Bar
+
+<br />
+
+### Running the Linear Regression
+
+```{r regression model}
+
+# Linear OLS Regression on Training 
+Regression_Price <- lm(Price ~ Age_08_04 + KM + Fuel_Type + HP + Automatic + Doors + Quarterly_Tax + Mfr_Guarantee + Guarantee_Period + Airco + Automatic_airco + CD_Player + Powered_Windows + Sport_Model + Tow_Bar, data = Training)
+
+# Scientific Notation
+options(scipen = 999)
+
+summary(Regression_Price)
+
+```
+
+
+> Taking into account all the requested variables in our linear regression without further analysis or variable selection, we can observe a fairly high Multiple R-squared, close to 0.9 and a adjusted R-squared of 0.8891. We have a very significant F-statistic, close to 0 which means that this model is already quite complex and better than a naive model including only the intercept. The most significant variables are the **Age** of the car, the number of kilometres (**KM**) and the automatic air conditioning (**Automatic_airco**), since all have the smallest p-value. **Quarterly Tax** would be our fourth most significant explanatory variable.
+
+<br />
+
+### 1. Exhaustive Search
+
+```{r exhaustive search}
+
+# use regsubsets() in package leaps to run an exhaustive search.
+library(leaps)
+
+# Duplicate the Dataset Training for Modification of Dummy
+Training_Search <- Training
+
+# create dummies for fuel type
+Fuel_Type <- as.data.frame(model.matrix(~ 0 + Fuel_Type, data=Training_Search))
+
+# replace Fuel_Type column with 2 dummies
+Training_Search <- cbind(Training_Search[,-8], Fuel_Type[,])
+
+# Search
+search <- regsubsets(Price ~ Age_08_04 + KM + Fuel_TypeCNG + Fuel_TypeDiesel + Fuel_TypePetrol + HP + Automatic + Doors + Quarterly_Tax + Mfr_Guarantee + Guarantee_Period + Airco + Automatic_airco + CD_Player + Powered_Windows + Sport_Model + Tow_Bar, data = Training_Search, nbest = 1, nvmax = dim(Training_Search)[2],
+method = "exhaustive")
+sum <- summary(search)
+
+```
+
+<br />
+
+#### Show Models
+
+```{r sum, warning=FALSE}
+# show models
+sum$which
+```
+
+<br />
+
+#### R-Squared
+
+```{r R-squared, warning=FALSE}
+# show metrics
+sum$rsq
+```
+
+> R-Squared keep increasing when we add more and more variables to the model, which is already expected since it doesn't account for the number of parameter (no penalty)
+
+<br />
+
+#### Adjusted R-Squared
+
+```{r adjusted R-squared, warning=FALSE}
+sum$adjr2
+```
+
+> Adjusted R-Squared keep increasing until the 15th value, 0.8890985 which is slight higher than the last one (16th). Thus we would have a model with 15 variables, excluding **Fuel_TypeDiesel** and **Fuel_TypePetrol** (since we dumify this variable, 1 at least is redundant).
+
+<br />
+
+#### Cp
+
+```{r Cp, warning=FALSE}
+sum$cp
+```
+
+<br />
+
+>  For our model selection, the lowest Cp value under the threshold P+1 = 17+1 = 18 is having a Cp = 16 which is the 16th model, thus the full model. 
+
+#### Resume of Exhaustive Research
+
+> Adjusted R-squared and Mallow's Cp give us 2 different possibilities, a model with 15 or 16 variables. 
+
+### 2. Popular Subset Selection Algorithms
+
+#### 2.1 Forward Selection
+
+```{r forward, warning=FALSE}
+
+Training_Selection <- Training[,c("Price","Age_08_04","KM","Fuel_Type","HP","Automatic","Doors","Quarterly_Tax", "Mfr_Guarantee", "Guarantee_Period", "Airco", "Automatic_airco", "CD_Player", "Powered_Windows" , "Sport_Model", "Tow_Bar")]
+
+# Setting Forward Selection
+Regression_Price_Null <- lm(Price ~ 1, data=Training_Selection)
+Regression_Price_Forward <- step(Regression_Price_Null, scope=list(lower=Regression_Price_Null,upper=Regression_Price), direction = "forward")
+
+summary(Regression_Price_Forward) 
+
+```
+
+> Forward removed 1 variables,  **Mfr_Guarantee**.  
+
+#### 2.2 Backward Elimination
+
+
+```{r backward, warning=FALSE}
+
+# Setting Backward Selection
+Regression_Price_Backward <- step(Regression_Price, direction = "backward")
+
+summary(Regression_Price_Backward) 
+
+```
+
+> Backward removed 1 variable, **Mfr_Guarantee**.
+
+#### 2.3 Stepwise Regression
+
+
+```{r stepwise, warning=FALSE}
+
+# Setting Stepwise Selection
+Regression_Price_Stepwise <- step(Regression_Price, direction = "both")
+
+summary(Regression_Price_Stepwise)
+
+```
+
+> Stepwise removed 1 variable, **Mfr_Guarantee**.
+
+#### Resume of Popular Subset Selection Algorithms
+
+
+> We can see that in all methods, Forward, Backward and Stepwise, only **Mfr_Guarantee** is dropped.
+
+
+### a. What appear to be the three or four most important car specifications for predicting the car's price?
+
+
+> After the Exhaustive Search and Popular Subset Selection Algorithms, we should have those 3-4 most important variable for predicting car's price: **Age**, **KM**, **Automatic_airco** and **Quarterly_Tax**. Another possibility, would be to scale numerical variable such as **Price**, **KM** or **Weight** (with log for example) since they are symmetrical but subject to upright skewness (**Age** is not symmetrical). We would get better normality in those variables, thus better statistical test. 
+
+### Histogram of Price, KM, Weight and Age
+
+```{r Histogram Check, warning=FALSE}
+
+# Log Price 
+
+library(ggplot2)
+
+Price_Hist <-ggplotly(ggplot(ToyotaDT) +
+ aes(x = Price) +
+ geom_histogram(bins = 30L, fill = "#1c6155") +
+ labs(title = "", 
+ subtitle = "Price") +
+ theme_minimal())
+
+KM_Hist <-ggplotly(ggplot(ToyotaDT) +
+ aes(x = KM) +
+ geom_histogram(bins = 30L, fill = "#1c6155") +
+ labs(title = "", 
+ subtitle = "KM") +
+ theme_minimal())
+
+Weight_Hist <-ggplotly(ggplot(ToyotaDT) +
+ aes(x = Weight) +
+ geom_histogram(bins = 30L, fill = "#1c6155") +
+ labs(title = "", 
+ subtitle = "Weight") +
+ theme_minimal())
+
+Age_Hist <-ggplotly(ggplot(ToyotaDT) +
+ aes(x = Age_08_04) +
+ geom_histogram(bins = 30L, fill = "#1c6155") +
+ labs(title = "", 
+ subtitle = "Age") +
+ theme_minimal())
+
+
+All_Hist <- combineWidgets(Price_Hist,KM_Hist,Weight_Hist,Age_Hist, ncol=2, title="Histogram of Price, KM, Weight and Age", footer = "Original Dataset")
+All_Hist
+
+
+```
+
+<br />
+<br />
+
+> We can see that **Age_08_04** is not symmetrical at all, thus could not even be thought as log variable. Since **Price** is the most skewed variable, we could log it to check a new regression model in the log-level type. It is also a common practice to only log the dependent variable if it is part of the numerical list such as wage, firm sales, market value etc... 
+
+### Log(Price) In Training and Validation
+
+```{r log price, warning=FALSE}
+
+# Duplicate Dataset
+Log_Training <- Training
+Log_Validation <- Validation
+
+# Log Price in both Dataset
+Log_Training$Price <- log(Log_Training$Price)
+Log_Validation$Price <- log(Log_Validation$Price)
+
+# Histogram Check
+library(ggplot2)
+
+Log_Price_Hist <- ggplotly(ggplot(Log_Training) +
+ aes(x = Price) +
+ geom_histogram(bins = 30L, fill = "#1c6155") +
+ labs(title = "Histogram - Log(Price) in Training", 
+ subtitle = "") +
+ theme_minimal())
+
+Log_Price_Hist
+
+```
+
+
+> Price looks less upright skewed and more normally distributed in this Histogram. 
+
+### Regression with Log(Price)
+
+```{r regression log}
+
+# Linear OLS Regression on Training 
+Regression_Price_Log <- lm(Price ~ Age_08_04 + KM + Fuel_Type + HP + Automatic + Doors + Quarterly_Tax + Mfr_Guarantee + Guarantee_Period + Airco + Automatic_airco + CD_Player + Powered_Windows + Sport_Model + Tow_Bar, data = Log_Training)
+
+# Scientific Notation
+options(scipen = 999)
+
+summary(Regression_Price_Log)
+
+
+```
+
+> We can now see that Multiple R-squared is lower than the standard Regression model without log(**Price**), and that **Mfr_Guarantee** and **Airco** are now quite significant. **CD_Player** and **Sport_Model** are not significant anymore. We could reuse the process before for model selection (or variable selection).
+
+### 1. Exhaustive Search
+
+```{r exhaustive search log}
+
+# use regsubsets() in package leaps to run an exhaustive search.
+library(leaps)
+
+# Duplicate the Dataset Training for Modification of Dummy
+Log_Training_Search <- Log_Training
+
+# create dummies for fuel type
+Fuel_Type <- as.data.frame(model.matrix(~ 0 + Fuel_Type, data=Log_Training_Search))
+
+# replace Fuel_Type column with 2 dummies
+Log_Training_Search <- cbind(Log_Training_Search[,-8], Fuel_Type[,])
+
+# Search
+search_log <- regsubsets(Price ~ Age_08_04 + KM + Fuel_TypeCNG + Fuel_TypeDiesel + Fuel_TypePetrol + HP + Automatic + Doors + Quarterly_Tax + Mfr_Guarantee + Guarantee_Period + Airco + Automatic_airco + CD_Player + Powered_Windows + Sport_Model + Tow_Bar, data = Log_Training_Search, nbest = 1, nvmax = dim(Log_Training_Search)[2],
+method = "exhaustive")
+
+sum_log <- summary(search_log)
+
+```
+
+<br />
+
+#### Show Models
+
+```{r sum log, warning=FALSE}
+# show models
+sum_log$which
+```
+
+<br />
+
+#### R-Squared
+
+```{r R-squared log, warning=FALSE}
+# show metrics
+sum_log$rsq
+```
+
+> R-Squared keep increasing when we add more and more variables to the model, which is already expected since it doesn't account for the number of parameter (no penalty)
+
+<br />
+
+#### Adjusted R-Squared
+
+```{r adjusted R-squared log, warning=FALSE}
+sum_log$adjr2
+```
+
+> Adjusted R-Squared keep increasing until the 15th value, 0.8640313. Thus we would have a model without **Sport_Model** and **Fuel_TypePetrol** (since it's the third dummy variable, already redundant). 
+
+<br />
+
+#### Cp
+
+```{r Cp log, warning=FALSE}
+sum_log$cp
+```
+
+<br />
+
+>  For our model selection, the lowest Cp value under the threshold P+1 = 17+1 = 18 is having a Cp = 17.30922 which is the 13th model, thus removing **CD_Player**,  **Sport_Model**, **Tow_Bar** and **Fuel_TypePetrol** (dummy variable, already redundant). Those Variables were having the lowest significancy in our model. 
+
+#### Resume of Exhaustive Research
+
+> Adjusted R-squared and Mallow's Cp give us 2 different possibilities, a model with 13 or 15 variables, but in both removing **Sport_Model**. 
+
+### 2. Popular Subset Selection Algorithms
+
+#### 2.1 Forward Selection
+
+```{r forward log, warning=FALSE}
+
+Log_Training_Selection <- Log_Training[,c("Price","Age_08_04","KM","Fuel_Type","HP","Automatic","Doors","Quarterly_Tax", "Mfr_Guarantee", "Guarantee_Period", "Airco", "Automatic_airco", "CD_Player", "Powered_Windows" , "Sport_Model", "Tow_Bar")]
+
+# Setting Forward Selection
+Log_Regression_Price_Null <- lm(Price ~ 1, data=Log_Training_Selection)
+Log_Regression_Price_Forward <- step(Log_Regression_Price_Null, scope=list(lower=Log_Regression_Price_Null,upper=Regression_Price_Log), direction = "forward")
+
+summary(Log_Regression_Price_Forward) 
+
+```
+
+> Forward removed 2 variables, **Sport_Model** and **CD_Player**.
+
+#### 2.2 Backward Elimination
+
+
+```{r backward log, warning=FALSE}
+
+# Setting Backward Selection
+Log_Regression_Price_Backward <- step(Regression_Price_Log, direction = "backward")
+
+summary(Log_Regression_Price_Backward) 
+
+```
+
+> Backward removed 2 variables, **Sport_Model** and **CD_Player**.
+
+#### 2.3 Stepwise Regression
+
+
+```{r stepwise log, warning=FALSE}
+
+# Setting Setpwise Selection
+Log_Regression_Price_Stepwise <- step(Regression_Price_Log, direction = "both")
+
+summary(Log_Regression_Price_Stepwise)
+
+```
+
+> Stepwise removed 2 variables, **Sport_Model** and **CD_Player**.
+
+
+#### Resume of Popular Subset Selection Algorithms
+
+
+> We can see that in all methods, Forward, Backward and Stepwise, **Sport_Model** and **CD_Player** are dropped. This process removed 2 variables instead of 1 in the case of Level-Level Model. Logging Price changed some explanatory part of our variables, now all variables are significant in our Log-Level Model. 
+
+### 2 Regression Models
+
+### Level-Level without **Mfr_Guarantee**
+
+```{r regression level-level}
+
+# Linear OLS Regression on Training without Mfr_Guarantee
+Regression_Price_New <- lm(Price ~ Age_08_04 + KM + Fuel_Type + HP + Automatic + Doors + Quarterly_Tax + Guarantee_Period + Airco + Automatic_airco + CD_Player + Powered_Windows + Sport_Model + Tow_Bar, data = Training)
+
+# Scientific Notation
+options(scipen = 999)
+
+summary(Regression_Price_New)
+
+
+```
+
+> We are having a high Multiple R-squared as before, but **Airco** is still included and not significant. **Age_08_04**, **KM**, **Automatic_airco** and **Quarterly_Tax** are still (as predicted) the top 3-4 important variables in our Level-Level Model. 
+
+
+### Log-Level without **Sport_Model** and **CD_Player**
+
+```{r regression log-level}
+
+# Linear OLS Regression on Training 
+Regression_Price_Log_New <- lm(Price ~ Age_08_04 + KM + Fuel_Type + HP + Automatic + Doors + Quarterly_Tax + Mfr_Guarantee + Guarantee_Period + Airco + Automatic_airco + Powered_Windows + Tow_Bar, data = Log_Training)
+
+# Scientific Notation
+options(scipen = 999)
+
+summary(Regression_Price_Log_New)
+
+
+```
+
+> We are having a lowest Multiple R-squared than Level-Level Model, but all variables are significant. **Age_08_04**, **KM**, **Automatic_airco** and **Quarterly_Tax** are still (as predicted) the top 3-4 important variables in our Log-Level Model, and **Quarterly_Tax** is even more significant in this model than the Level-level one. 
+
+
+### b. Using metrics you consider usefull, assess the performance of the model in predicting prices. 
+
+
+### Computing Prediction with the Regression Model (Level-Level) on Validation - Accuracy
+
+```{r performance of the model}
+
+# Linear OLS Regression on Training without Mfr_Guarantee
+Regression_Price_Optimized <- lm(Price ~ Age_08_04 + KM + Fuel_Type + HP + Automatic + Doors + Quarterly_Tax + Guarantee_Period + Airco + Automatic_airco + CD_Player + Powered_Windows + Sport_Model + Tow_Bar, data = Training)
+
+library(forecast)
+# use predict() to make predictions on a new set.
+car.lm.pred <- predict(Regression_Price_Optimized, Validation)
+options(scipen=999, digits = 1)
+some.residuals <- Validation$Price[1:20] - car.lm.pred[1:20]
+data.frame("Predicted" = car.lm.pred[1:20], "Actual" = Validation$Price[1:20],
+"Residual" = some.residuals)
+options(scipen=999, digits = 3)
+
+# use accuracy() to compute common accuracy measures.
+accuracy(car.lm.pred, Validation$Price)
+
+
+```
+
+> Here the resulting metrics for our predictions errors. The closest to 0 the better for accuracy (especially for RMSE)
+
+```{r performance of the model full}
+
+# Linear OLS Regression on Training with Mfr_Guarantee
+library(forecast)
+
+# use predict() to make predictions on a new set.
+car.lm.pred.full <- predict(Regression_Price, Validation)
+options(scipen=999, digits = 1)
+some.residuals <- Validation$Price[1:20] - car.lm.pred.full[1:20]
+data.frame("Predicted" = car.lm.pred.full[1:20], "Actual" = Validation$Price[1:20],
+"Residual" = some.residuals)
+options(scipen=999, digits = 3)
+
+# use accuracy() to compute common accuracy measures.
+accuracy(car.lm.pred.full, Validation$Price)
+
+```
+
+> Here the resulting metrics for our predictions errors with full model. The closest to 0 the better for accuracy, RMSE should also be the smallest possible. We can see that removing **Mfr_Guarantee** doesn't give better predictions accuracy since the RMSE and ME are both closer to 0 with the Full Model. Thus we would keep the Full Model for better accuracy. 
+
+### Histogram of Validation Errors with the Full Model Level-Level
+
+<center>
+
+```{r validation errors histogram}
+
+library(forecast)
+car.lm.pred <- predict(Regression_Price, Validation)
+all.residuals <- Validation$Price - car.lm.pred
+length(all.residuals[which(all.residuals > -1406 & all.residuals < 1406)])/400
+hist(all.residuals, main="Histogram of Residuals from Predictions against Validation", breaks = 25, xlab = "Residuals", col = "#1c6155")
+
+```
+
+</center>
+
+> We can see the residuals of our predictions on the Validation set. The Spread is clearly visible, between -2000 and 2000 and normally distributed. Some extremes values for our residuals appear on the far right,.
+
+
+
+### Computing Prediction with the Regression Model (Log-Level without **Sport_Model** and **CD_Player**) on Validation - Accuracy
+
+```{r performance of the model new}
+
+
+# Linear OLS Regression on Training without Mfr_Guarantee
+Log_Regression_Price_Optimized <- lm(Price ~ Age_08_04 + KM + Fuel_Type + HP + Automatic + Doors + Quarterly_Tax + Guarantee_Period + Airco + Automatic_airco + Powered_Windows + Tow_Bar, data = Log_Training)
+
+library(forecast)
+# use predict() to make predictions on a new set.
+car.lm.pred_log <- predict(Log_Regression_Price_Optimized, Log_Validation)
+options(scipen=999, digits = 1)
+
+# Reverse Back Log
+car.lm.pred_log <- exp(car.lm.pred_log)
+Log_Validation$Price <- exp(Log_Validation$Price)
+
+some.residuals <- Log_Validation$Price[1:20] - car.lm.pred_log[1:20]
+data.frame("Predicted" = car.lm.pred_log[1:20], "Actual" = Log_Validation$Price[1:20],
+"Residual" = some.residuals)
+options(scipen=999, digits = 3)
+
+
+# use accuracy() to compute common accuracy measures.
+accuracy(car.lm.pred_log, Log_Validation$Price)
+
+
+```
+
+> we can see that logging our Price outcome variable and using model selection processes such as Exhaustive Research or Popular Subset Selection Algorithms led us having a better Regression Model (Log-Level without **Sport_Model** and **CD_Player**) in predictions. Level-Level Model with the same processes gave us RMSE of 1326 and here we have RMSE of 1202. 
+
+
+# <span style="color: #1c6155;">Ex 9.3</span> 
+
+```{r clean environment 1.1, include=FALSE}
+
+# Clean Environment
+rm(list = ls()) 
+
+```
+
+## Predicting Prices of Used Cars (Regression Trees). 
+
+## Data Preprocessing - 60% Training and 40% Validation 
+
+```{r Data Preprocessing}
+
+# Set Seed 
+set.seed(1)
+
+ToyotaDT_TREE <- fread("DATA/ToyotaCorolla.csv")
+
+# Input Cutting Ratio
+Prob_Train <- 0.6
+Prob_Validation <- 1 - Prob_Train
+
+# Training and Validation Set Splitting
+sample <- sample(c(TRUE, FALSE), nrow(ToyotaDT_TREE), replace=TRUE, prob=c(Prob_Train,Prob_Validation))
+Training_TREE  <- ToyotaDT_TREE[sample, ]
+Validation_TREE   <- ToyotaDT_TREE[!sample, ]
+
+# Proportions Check
+Prop_Train <- nrow(Training_TREE)/nrow(ToyotaDT_TREE)*100
+Prop_Valid <- nrow(Validation_TREE)/nrow(ToyotaDT_TREE)*100
+
+# Printing Proportions for double checking
+print(paste(round(Prop_Train,2),"% In Training", round(Prop_Valid,2),"% In Validation"))
+
+```
+
+## a. Run a Regression Tree 
+
+with CP=0.001 and "ANOVA" Method
+
+<center>
+
+```{r Regression Tree}
+
+# Set Seed
+set.seed(1)
+
+# Regression Tree Packages
+library(rpart)
+library(rpart.plot)
+
+# Regression Tree Parameters
+cp_1 = 0.001
+method = "anova"
+minbucket = 1
+maxdepth = 30 #30 maximum
+
+# Running Regression Tree
+Tree_1 <- rpart(Price ~ Age_08_04+KM+Fuel_Type+HP+Automatic+Doors+Quarterly_Tax+Mfr_Guarantee+Guarantee_Period+Airco+Automatic+CD_Player+Powered_Windows+Sport_Model+Tow_Bar, data = Training_TREE, control = rpart.control(maxdepth = maxdepth, cp=cp_1,minbucket = minbucket, method=method))
+
+# Plotting Regression Tree
+Tree_1_Plot <- rpart.plot(Tree_1, type=0, varlen = 0, box.col=ifelse(Tree_1$frame$var == "<leaf>", '#8db0aa', 'white'), fallen.leaves = FALSE, extra = FALSE)
+
+# Number of Leafs
+Length_Tree_1 = length(Tree_1$frame$var[Tree_1$frame$var == "<leaf>"])
+
+print(paste("There is", Length_Tree_1,"Number of Leaves"))
+
+```
+
+</center>
+
+> This Regression Tree is limited to 30 splits by the function. In Green are the terminal nodes and the black text the condition to be evaluated before choosing a branch. We have 31 Leaves (Terminal Nodes)
+
+
+### CP Plot
+
+<center>
+
+```{r size of tree 1}
+
+# Tree Size
+plotcp(Tree_1)
+
+```
+
+</center>
+
+> With small CP, Our Regression Tree can go until 31 Leaves... But we see that the relative error seems to already be small enough between 9 and 13 Leaves. 
+
+### i. Which appear to be the three or four most important car specifications for predicting the car's price? 
+
+
+```{r Specifications for Predictions}
+
+# Most 3 or 4 specifications for predictions in car's price
+Tree_1
+
+Tree_1_Importance <- as.data.frame(Tree_1$variable.importance)
+
+DT::datatable(Tree_1_Importance)
+
+```
+
+
+
+> Using our Regression Tree output, we can see that the first 4 split are based on Age only. Then the 4 most important variables are **Age_08_04**, **KM**, **Quarterly_Tax** and **HP**.
+
+
+### ii. RMS Error between Training and Validation
+
+<center>
+
+```{r RMS Error Training and Validation}
+
+# Set Seed 
+set.seed(1)
+
+# Predictions of Training and Validation
+Training_Predictions <- predict(Tree_1,Training_TREE)
+Validation_Predictions <- predict(Tree_1, Validation_TREE)
+
+# RMSE  ------------------------------------------------------------------------
+
+# Training RMSE
+RMSE_Training <- RMSE(Training_Predictions,Training_TREE$Price)
+
+# Validation RMSE 
+RMSE_Validation <- RMSE(Validation_Predictions, Validation_TREE$Price)
+
+# All RMSE
+BIND_Training_Validation <- cbind(RMSE_Training,RMSE_Validation)
+RMSE_Dataframe <- as.data.frame(BIND_Training_Validation)
+
+flextable(RMSE_Dataframe) %>% set_header_labels(RMSE_Dataframe, values = list(RMSE_Training="RMSE Training",RMSE_Validation="RMSE Validation")
+  )
+
+```
+
+</center>
+
+> RMSE for Validation is always higher since we are overfitting the model to our Training Set.
+
+### Computing Residuals Boxplots
+
+<center>
+
+```{r residuals Tree 1}
+
+# Set Seed 
+set.seed(1)
+
+# Computing Residuals --------------------------------------------------------------
+Residuals_Training_Tree_1 <- Training_TREE$Price - Training_Predictions
+Residuals_Validation_Tree_1 <- Validation_TREE$Price - Validation_Predictions
+
+Residuals_Training_Tree_1 <- as.data.frame(Residuals_Training_Tree_1)
+Residuals_Validation_Tree_1 <- as.data.frame(Residuals_Validation_Tree_1)
+
+# Boxplots -------------------------------------------------------------------------
+
+library(ggplot2)
+
+# Boxplot Training
+box1 <- ggplotly(ggplot(Residuals_Training_Tree_1) +
+ aes(x = "", y = Residuals_Training_Tree_1) +
+ geom_boxplot(fill = "#1c6155") +
+ labs(x = "with 882 observations", y = "Price Residuals", title = "Residuals Training VS Predicted", subtitle = "Boxplot", 
+ caption = "") +
+ theme_minimal() + ylim(-10000, 10000) + theme(text = element_text(size = 8)))
+
+# Boxplot Validation
+box2 <- ggplotly(ggplot(Residuals_Validation_Tree_1) +
+ aes(x = "", y = Residuals_Validation_Tree_1) +
+ geom_boxplot(fill = "#1c6155") +
+ labs(x = "with 554 observations", y = "Price Residuals", title = "Residuals Validation VS Predicted", subtitle = "Boxplot", 
+ caption = "") +
+ theme_minimal() + ylim(-10000, 10000) + theme(text = element_text(size = 8)))
+
+# Combine them
+combineWidgets(box1,box2, ncol=2)
+
+```
+
+</center>
+
+> We have more outliers residuals in the Validation VS Predicted Boxplot since we are having less accuracy predictions. Training Vs Predicted is less subject to outliers since the model already overfit the Training Set. 
+
+### iii. How can we achieve predictions for the training set that are not equal to the actual prices? 
+
+
+> This Question was removed from the errata book.
+
+
+### iv. Prune the full tree using the cross-validation error. Compared to the full tree, what is the predictive performance for the validation set?
+
+
+CP Table of our full Tree Regression (**CP** = 0.001)
+
+```{r cp table}
+
+# Set Seed 
+set.seed(1)
+
+cp_2=0.001
+
+Tree_Full <- rpart(Price ~ Age_08_04+KM+Fuel_Type+HP+Automatic+Doors+Quarterly_Tax+Mfr_Guarantee+Guarantee_Period+Airco+Automatic+CD_Player+Powered_Windows+Sport_Model+Tow_Bar, data = Training_TREE, control = rpart.control(maxdepth = maxdepth, cp=cp_2,minbucket = minbucket, method=method))
+
+DT::datatable(Tree_Full$cptable)
+
+```
+
+
+### Smallest X-Error and CP related
+
+```{r smallest x-error}
+
+# Set Seed 
+set.seed(1)
+
+
+(best_CP <- Tree_Full$cptable[which.min(Tree_Full$cptable[, "xerror"]), "CP"])
+
+```
+> Now we compute our prunning with this CP value on our Full Tree Regression
+
+### Prune Tree with optimal 
+
+<center>
+
+```{r pruning full tree}
+
+Pruned_Tree <- prune(Tree_Full, cp = best_CP)
+
+# Plotting Pruned Tree
+Pruned_Tree_Plot <- rpart.plot(Pruned_Tree, type=0, varlen = 0, box.col=ifelse(Pruned_Tree$frame$var == "<leaf>", '#8db0aa', 'white'), fallen.leaves = FALSE, extra = FALSE)
+
+# Number of Leafs
+Length_Tree_Pruned = length(Pruned_Tree$frame$var[Pruned_Tree$frame$var == "<leaf>"])
+
+print(paste("There is", Length_Tree_Pruned,"Number of Leaves"))
+
+```
+
+</center>
+
+> Pruning our Tree left us with 28 leaves (Terminal Nodes) instead of 31. 
+
+### Predictions Accuracy on Validation Set with Prune Tree
+
+<center>
+
+```{r Predictions Accuracy Validation Prune Tree}
+
+# Predicting
+Predictions_Full_Tree <- predict(Tree_Full, Validation_TREE)
+Predictions_Prune_Tree <- predict(Pruned_Tree, Validation_TREE)
+
+# RMSE of Full and Prune Tree
+RMSE_Full_Tree <- RMSE(Validation_TREE$Price, Predictions_Full_Tree)
+RMSE_Prune_Tree <- RMSE(Validation_TREE$Price, Predictions_Prune_Tree)
+
+# Data frame RMSE
+RMSE_Full_Tree_2 <- cbind(RMSE_Prune_Tree,RMSE_Validation)
+RMSE_Full_Tree_2 <- as.data.frame(RMSE_Full_Tree_2)
+
+# Printing Table
+flextable(RMSE_Full_Tree_2) %>% set_header_labels(RMSE_Full_Tree_2,RMSE_Full_Tree="RMSE Validation - Full Tree with CP=0",RMSE_Prune_Tree="RMSE Validation - Prune Tree with CP=0.001", RMSE_Validation="RMSE Validation - First Tree with CP=0.001")
+
+```
+
+</center>
+
+> We can see that Prunning our Regression Tree helped us getting a smaller RMSE compared to the First Tree. 
+
+## b. Price Variable into Categorical Variable
+
+Here are the Binned_Price Variable into 20 levels
+
+```{r Price into Categorical}
+
+# Duplicating Training Data 
+New_Training_Tree <- Training_TREE
+
+# Cutting into 20 breaks the Price Variable
+New_Training_Tree$Price <- cut(New_Training_Tree$Price, breaks = 20)
+
+# Renaming Price -> Binned_Price
+colnames(New_Training_Tree)[3] <- "Binned_Price"
+
+# Printing Levels of Binned_Price
+print(paste(levels(New_Training_Tree$Binned_Price)))
+
+```
+
+
+### i. Compare CT and RT. Are they different? (Structure, Top Predictors, Size of tree, etc.) Why? 
+
+### Running Class Tree
+
+<center>
+
+```{r CT}
+
+# Running Class Tree
+CT_Tree <- rpart(Binned_Price ~ Age_08_04+KM+Fuel_Type+HP+Automatic+Doors+Quarterly_Tax+Mfr_Guarantee+Guarantee_Period+Airco+Automatic+CD_Player+Powered_Windows+Sport_Model+Tow_Bar, data = New_Training_Tree, method = "class")
+
+# Plotting Tree
+CT_Tree_Plot <- rpart.plot(CT_Tree, type=0, varlen = 0, box.col=ifelse(CT_Tree$frame$var == "<leaf>", '#8db0aa', 'white'), fallen.leaves = FALSE, extra = FALSE)
+
+# Number of Leafs
+Length_Tree_CT = length(CT_Tree$frame$var[CT_Tree$frame$var == "<leaf>"])
+print(paste("There is", Length_Tree_CT,"Number of Leaves"))
+
+
+```
+
+</center>
+
+> We can see that this Class Tree is having 8 Terminal Nodes (or Leaves) and way smaller in depth compared to the regression Tree we used in the exercices before. There is up to 4 layers in this CT. 
+
+<center>
+
+### Importance of Variables in CT
+
+
+```{r Importance CT}
+
+# Most 3 or 4 specifications for predictions in car's price
+CT_Tree_Importance <- as.data.frame(CT_Tree$variable.importance)
+
+DT::datatable(CT_Tree_Importance)
+
+```
+
+</center>
+
+
+> Using our Class Tree output, we can see that the 4 most important variables are **Age_08_04**, **KM**, **CD_Player** and **Airco**. Remember that the Regression Tree gave us **Age_08_04**, **KM**, **Quarterly_Tax** and **HP**, so they only have the first 2 variables in common and then differ in their importance weights. 
+
+
+### ii. Predict the price, using the CT, of a used Toyota Corolla with the following specifications. 
+
+<center> 
+
+![](IMAGES/Table 2.png)
+</center>
+
+### Predictions from the Table 2 using CT
+
+```{r predictions based on table 9.6}
+
+# Dataframe Car Specifcations for Predictions 
+Prediction_1_Car <- data.frame("Age_08_04"=77,"KM"=117000, "Fuel_Type"="Petrol","HP"=110,"Automatic"=0,"Doors"=5,"Quarterly_Tax"=100,"Mfr_Guarantee"=0,"Guarantee_Period"=3, "Airco"=1, "Automatic"=0, "CD_Player"=0, "Powered_Windows"=0, "Sport_Model"=0, "Tow_Bar"=1)
+
+# Predicting Car Price with CT
+Predicted_Car_Price <- predict(CT_Tree,Prediction_1_Car)
+
+# Removing 0 Probabilities
+Predicted_Car_Price <- Predicted_Car_Price[, colSums(Predicted_Car_Price != 0) > 0]
+
+# As Dataframe for ggplotting
+Predicted_Car_Price <- as.data.frame(Predicted_Car_Price)
+
+# Renaming Column
+colnames(Predicted_Car_Price) <- "Probabilities in %"
+
+# Probabilities Rounding and %
+Predicted_Car_Price$`Probabilities in %` <- Predicted_Car_Price$`Probabilities in %` * 100
+
+Predicted_Car_Price$`Probabilities in %` <- round(Predicted_Car_Price$`Probabilities in %`,2)
+
+# Flextable
+DT::datatable(Predicted_Car_Price)
+
+
+```
+
+
+### iii. Compare the predictions in terms of the predictors that were used, the magnitude of the difference between the two predictions, and the advantages and disadvantages of the two methods. 
+
+<center>
+
+```{r Magnitude}
+
+CT_Tree_Plot <- rpart.plot(CT_Tree, type=0, varlen = 0, box.col=ifelse(CT_Tree$frame$var == "<leaf>", '#8db0aa', 'white'), fallen.leaves = FALSE, extra = FALSE)
+
+```
+
+</center>
+
+
+> By using the CT Tree, we first start with **Age_08_04** >= 57 -> *Yes*, then **Age_08_04** >=70 -> *Yes*, then **KM** >= *174000* -> *No* and we stop at (7.16e+03,8.57e+03] which is 53.57% probability for this specific car. We are using far less steps to get to our predictions compared to the Regression Tree (which also used **Age_08_04** and **KM** as main predictors as well. By using CT instead of RT, we are not getting an exact value of price, but instead a probability distribution of the different Price Bins our car could be in and thus selecting the highest probability would get our car's price into that category. CT have less precisions in outcome predictions but have far less branches and terminal nodes, thus more easy for reading and understanding each variables importance in the prediction process, as well as giving probabilities, which can be useful depending on the context. One possible issue with CT, is that it is really difficult to assess the quality of the predictions since we need to either compare the category classification with confusion matrix, thus we are having far less precision since the size of the bins on numerical variable is assigned by us in a supervised manner, 20 bins might be changed to only 10 bins, thus this could lead to a far more accurate prediction in the confusion matrix, but not giving enough precision for real application in a company. 
+
+
+# <span style="color: #1c6155;">Ex 11.3</span> 
+
+```{r clean environment 2, include=FALSE}
+
+# Clean Environment
+rm(list = ls()) 
+
+```
+
+## Car Sales 
+
+The Goal is to predict the price of a used Toyota Corolla based on its specifications.
+
+### a. Fit a neural network model to the data. Use a single hidden layer with 2 nodes. 
+
+Use predictors **Age_08_04**, **KM**, **Fuel_Type**, **HP**, **Automatic**, **Doors**, **Quarterly_Tax**, **Mfr_Guarantee**, **Guarantee_Period**, **Airco**, **Automatic_airco**, **CD_Player**, **Powered_Windows**, **Sport_Model**, and **Tow_Bar**.
+
+
+### Splitting Training and Validation Set - 60% VS 40%
+
+```{r neural network}
+
+# Reproducible Results
+set.seed(1)
+
+# required Packages
+library(neuralnet)
+library(nnet)
+library(caret)
+
+# Load the Dataset with Fread()
+ToyotaDT_NN <- fread("DATA/ToyotaCorolla.csv")
+
+# Select the 15 variables 
+ToyotaDT_NN <- ToyotaDT_NN[,c("Price","Age_08_04","KM","Fuel_Type","HP","Automatic","Doors","Quarterly_Tax","Mfr_Guarantee","Guarantee_Period","Airco","Automatic_airco","CD_Player","Powered_Windows","Sport_Model","Tow_Bar")]
+
+# Input Cutting Ratio
+probability_train <- 0.6
+probability_test <- 1 - probability_train
+
+# Training and Validation Set Splitting
+sample <- sample(c(TRUE, FALSE), nrow(ToyotaDT_NN), replace=TRUE, prob=c(probability_train,probability_test))
+Train_NN  <- ToyotaDT_NN[sample, ]
+Test_NN   <- ToyotaDT_NN[!sample, ]
+
+# Proportions Check
+Prop_Training <- nrow(Train_NN)/nrow(ToyotaDT_NN)*100
+Prop_Validation <- nrow(Test_NN)/nrow(ToyotaDT_NN)*100
+
+# Preprocess Variables - 8 Dummies - Fuel Type to Dummy - 7 Numerical
+
+## create dummies for fuel type
+Fuel_Type <- as.data.frame(model.matrix(~ 0 + Fuel_Type, data=Train_NN))
+
+## replace Fuel_Type column with 2 dummies
+Train_NN <- cbind(Train_NN[,-c("Fuel_Type")], Fuel_Type[,])
+
+## replace Fuel_Type column with 2 dummies
+Test_NN <- cbind(Test_NN[,-c("Fuel_Type")], Fuel_Type[,])
+
+## Numerical Processing with Training Set
+preProcValues <- preProcess(Train_NN[,c("Price","Age_08_04","KM","HP","Doors","Quarterly_Tax","Guarantee_Period")], method = "range")
+
+## Preprocess the Training Set
+Train_NN_Preprocess <- predict(preProcValues, Train_NN)
+
+## Preprocess the Test Set
+Test_NN_Preprocess <- predict(preProcValues, Test_NN)
+
+# Print Proportions
+
+print(paste(round(Prop_Training,2),"% In Training", round(Prop_Validation,2),"% In Validation"))
+
+```
+
+
+### Neural Network A - 1 Hidden Layers with 2 Nodes 
+
+
+<center>
+
+```{r neural plot A}
+
+# Reproducible Results
+set.seed(1)
+
+nn_1 <- neuralnet(Price ~ ., data = Train_NN_Preprocess, linear.output = T, hidden = 2)
+
+plot(nn_1, rep="best")
+
+```
+
+</center>
+
+
+### Weights of the Neural Network A
+
+```{r neural weights A}
+
+# display weights
+nn_1$weights
+
+```
+
+### Neural Network B - 1 Hidden Layers with 5 Nodes 
+
+<center>
+
+```{r neural plot B}
+
+# Reproducible Results
+set.seed(1)
+
+nn_2 <- neuralnet(Price ~ ., data = Train_NN_Preprocess, linear.output = T, hidden = 5)
+
+plot(nn_2, rep="best")
+
+```
+
+</center>
+
+### Weights of the Neural Network B
+
+```{r neural weights B}
+
+# display weights
+nn_2$weights
+
+```
+
+### Neural Network C - 2 Hidden Layers with 5 Nodes in each
+
+<center>
+
+```{r neural plot C}
+
+# Reproducible Results
+set.seed(1)
+
+nn_3 <- neuralnet(Price ~ ., data = Train_NN_Preprocess, linear.output = T, hidden = c(5,5))
+
+plot(nn_3, rep="best")
+
+```
+</center>
+
+
+### Weights of the Neural Network C
+
+```{r neural weights C}
+
+# display weights
+nn_3$weights
+
+```
+
+
+### Predictions and RMSE
+
+#### RMSE For Training Set
+
+<center>
+
+```{r predictions and RMSE for Training Set}
+
+# Preprocess Scale - Range Method ----------------------------
+
+# Predictions for Training -----------------------------------
+
+# Predictions with nn
+Train_Prediction_nn_1 <- predict(nn_1,Train_NN_Preprocess)
+
+# Predictions with nn_2
+Train_Prediction_nn_2 <- predict(nn_2,Train_NN_Preprocess)
+
+# Predictions with nn_3
+Train_Prediction_nn_3 <- predict(nn_3,Train_NN_Preprocess)
+
+# Back transform to Original Scale ---------------------------
+
+# Predictions with nn
+Train_Prediction_nn_1 <- Train_Prediction_nn_1*(max(Train_NN$Price)-min(Train_NN$Price))+min(Train_NN$Price)
+
+# Predictions with nn_2
+Train_Prediction_nn_2 <- Train_Prediction_nn_2*(max(Train_NN$Price)-min(Train_NN$Price))+min(Train_NN$Price)
+
+# Predictions with nn_3
+Train_Prediction_nn_3 <- Train_Prediction_nn_3*(max(Train_NN$Price)-min(Train_NN$Price))+min(Train_NN$Price)
+
+# RMSE for Train  -------------------------------------------------------
+
+RMSE_Train_Prediction_nn_1 <- RMSE(Train_Prediction_nn_1,Train_NN$Price)
+RMSE_Train_Prediction_nn_2 <- RMSE(Train_Prediction_nn_2,Train_NN$Price)
+RMSE_Train_Prediction_nn_3 <- RMSE(Train_Prediction_nn_3,Train_NN$Price)
+
+RMSE <- c(RMSE_Train_Prediction_nn_1,RMSE_Train_Prediction_nn_2,RMSE_Train_Prediction_nn_3)
+
+# Rounding RMSE
+RMSE <- round(RMSE,2)
+
+# Adding Name to Model
+Model <- c("Neural A: 1 Hidden Layer, 2 Nodes","Neural B: 1 Hidden Layer, 5 Nodes", "Neural C: 2 Hidden Layer, 5 Nodes")
+
+Frame_RMSE <- cbind(Model,RMSE)
+Frame_RMSE <- as.data.frame(Frame_RMSE)
+
+RMSE_DATA <- flextable(Frame_RMSE) %>% fontsize(size = 8, part = "all")
+
+(RMSE_DATA)
+
+```
+
+</center>
+
+#### RMSE For Validation Set
+
+<center>
+
+```{r predictions and RMSE for Validation Set}
+
+# Predictions for Validation --------------------------------
+
+# Predictions with nn
+Validation_Prediction_nn_1 <- predict(nn_1,Test_NN_Preprocess)
+
+# Predictions with nn_2
+Validation_Prediction_nn_2 <- predict(nn_2,Test_NN_Preprocess)
+
+# Predictions with nn_3
+Validation_Prediction_nn_3 <- predict(nn_3,Test_NN_Preprocess)
+
+# Back transform to Original Scale ---------------------------
+
+# Predictions with nn
+Validation_Prediction_nn_1 <- Validation_Prediction_nn_1*(max(Train_NN$Price)-min(Train_NN$Price))+min(Train_NN$Price)
+
+# Predictions with nn_2
+Validation_Prediction_nn_2 <- Validation_Prediction_nn_2*(max(Train_NN$Price)-min(Train_NN$Price))+min(Train_NN$Price)
+
+# Predictions with nn_3
+Validation_Prediction_nn_3 <- Validation_Prediction_nn_3*(max(Train_NN$Price)-min(Train_NN$Price))+min(Train_NN$Price)
+
+# RMSE for Validation  -------------------------------------------------------
+
+RMSE_Validation_Prediction_1 <- RMSE(Validation_Prediction_nn_1, Test_NN$Price)
+RMSE_Validation_Prediction_2 <- RMSE(Validation_Prediction_nn_2, Test_NN$Price)
+RMSE_Validation_Prediction_3 <- RMSE(Validation_Prediction_nn_3, Test_NN$Price)
+
+RMSE_Validation <- c(RMSE_Validation_Prediction_1,RMSE_Validation_Prediction_2,RMSE_Validation_Prediction_3)
+
+# Rounding RMSE
+RMSE_Validation <- round(RMSE_Validation,2)
+
+# Adding Name to Model
+Model <- c("Neural A: 1 Hidden Layer, 2 Nodes","Neural B: 1 Hidden Layer, 5 Nodes", "Neural C: 2 Hidden Layer, 5 Nodes")
+
+Frame_RMSE_Validation <- cbind(Model,RMSE_Validation)
+Frame_RMSE_Validation <- as.data.frame(Frame_RMSE_Validation)
+
+RMSE_VALIDATION_DATA <- flextable(Frame_RMSE_Validation) %>% fontsize(size = 8, part = "all")
+RMSE_VALIDATION_DATA <- set_header_labels(RMSE_VALIDATION_DATA, RMSE_Validation = "RMSE")
+
+(RMSE_VALIDATION_DATA)
+
+```
+
+</center>
+
+#### i. What happens to the RMS error for the training data as the number of layers and nodes increases ?
+
+> RMSE tend to decrease the more when complexify our neural network (Model C in that case). This indicates we are overfitting more and more our model to the training dataset. Model A and B are having less and less RMSE until reaching Model C. 
+
+#### ii. What happens to the RMS error for the validation data?
+
+> The RMSE for the Validation Data is lower for the Neural Model B than Neural Model A, and then it increases with the model C. 
+
+#### iii. Comment on the appropriate number of layers and nodes for this application. 
+
+> Model A and B are close, but Model A is not in a overfitting situation, we should decide wether we prefer good predictions with Model B and more overfitting to the training dataset, or Model A which give less accurate results but with more stability in future predictions since it is not overfitting such as Model C. In this case, I would prefer the Model B giving more accurate results but more prone to instability, thus choosing 1 Hidden Layers with 5 Nodes. Choosing Model C would for sure lead to far less accurate results in other predictions since the model is more instable due to its overfitting issue on the training set. 
+
+
+# <span style="color: #1c6155;">References</span>
+
+[Github Repo for this Homework 4](https://github.com/LiamPhan17/DATA_MINING_HW4)
+
+[Data Mining for Business Analytics: Concepts, Techniques, and Applications in R](https://www.wiley.com/en-us/Data+Mining+for+Business+Analytics:+Concepts,+Techniques,+and+Applications+in+R-p-9781118879368)
+
+[Summarytools in R Markdown Documents](https://cran.r-project.org/web/packages/summarytools/vignettes/rmarkdown.html)
+
