@@ -257,7 +257,7 @@ print(paste("Proportion in Training is", Training_Proportion_Check*100,"%", "and
 > Use Personal Loan as the outcome variable. Report the validation confusion matrix for each of the three models. 
 
 
-### Logistic Regression
+### <span style="color: #1c6155;">Logistic Regression</span> 
 
 ```{r LR}
 
@@ -287,7 +287,7 @@ summary(logit.reg)
 ```
 
 
-### Predictions and Confusion Matrix
+#### Predictions and Confusion Matrix
 
 
 <center>
@@ -372,9 +372,9 @@ draw_confusion_matrix_LR(Confusion_Matrix_LR)
 > Comments:
 
 
-### K-nearest neighbors with *k* = 3
+### <span style="color: #1c6155;">K-nearest neighbors with *k* = 3</span> 
 
-### Data Preprocessing 
+#### Data Preprocessing 
 
 ```{r Preprocess for KNN}
 
@@ -425,7 +425,7 @@ UB_Validation_Preprocess <- predict(norm_values, UB_Validation)
 ```
 
 
-### Predictions and Confusion Matrix
+#### Predictions and Confusion Matrix
 
 <center>
 
@@ -445,8 +445,6 @@ Predictions_KNN_Training <- knn(train=UB_Training_Preprocess[,-c("Personal Loan"
 
 # Confusion Matrix
 Confusion_Matrix_KNN <- confusionMatrix(data = Predictions_KNN_Training, reference = UB_Validation$`Personal Loan`)
-
-Confusion_Matrix_KNN
 
 # Create the Function for Confusion Matrix
 draw_confusion_matrix_KNN <- function(cm) {
@@ -505,7 +503,7 @@ draw_confusion_matrix_KNN(Confusion_Matrix_KNN)
 > Comments:
 
 
-### Classification tress
+### <span style="color: #1c6155;">Classification Trees</span>
 
 <center>
 
@@ -528,7 +526,7 @@ CT_Plot <- rpart.plot(CT, type=0, varlen = 0, box.col=ifelse(CT$frame$var == "<l
 
 </center>
 
-# Predictions and Confusion Matrix
+#### Predictions and Confusion Matrix
 
 <center>
 
@@ -549,7 +547,7 @@ draw_confusion_matrix_CT <- function(cm) {
   layout(matrix(c(1,1,2)))
   par(mar=c(2,2,2,2))
   plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
-  title('CONFUSION MATRIX for Classification Tree', cex.main=2)
+  title('CONFUSION MATRIX for Classification Trees', cex.main=2)
 
   # create the matrix 
   rect(150, 430, 240, 370, col='#1c6155')
