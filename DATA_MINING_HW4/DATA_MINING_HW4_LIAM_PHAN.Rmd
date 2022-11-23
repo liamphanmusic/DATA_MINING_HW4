@@ -599,6 +599,38 @@ draw_confusion_matrix_CT(Confusion_Matrix_CT)
 > Comments:
 
 
+### <span style="color: #1c6155;">Most Accurate Model</span>
+
+```{r most accurate model}
+
+Accuracy_CT <- Confusion_Matrix_CT$overall[1]
+
+Accuracy_KNN <- Confusion_Matrix_KNN$overall[1]
+
+Accuracy_LR <- Confusion_Matrix_LR$overall[1]
+
+Accuracy_DF <- data.frame(Accuracy_CT,Accuracy_KNN,Accuracy_LR)
+
+Accuracy_DF <- as.data.frame(Accuracy_DF)
+
+# Plotting Accuracy
+data.table(Accuracy_DF)
+
+```
+
+> Comments: The most accurate model is the Classification Trees, having at least 98% accurate predictions (Training against Validation), the lowest accuracy model is the Logistic Regression with 95% Accuracy. 
+
+
+## b. Create Dataframe with the actual outcome, predicted outcome, and each of the tree models
+
+```{r create dataframe b}
+
+
+
+```
+
+
+
 
 # <span style="color: #1c6155;">Ex 13.2</span> 
 
