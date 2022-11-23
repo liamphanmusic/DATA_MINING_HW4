@@ -625,11 +625,18 @@ data.table(Accuracy_DF)
 
 ```{r create dataframe b}
 
+# Creating Actual VERSUS Predicted Dataframe
 LR_Dataframe <- data.frame(LR_Validation$`Personal Loan`,logit.reg.pred_round)
 KNN_Dataframe <- data.frame(LR_Validation$`Personal Loan`, Predictions_KNN_Training)
 CT_Dataframe <- data.frame(LR_Validation$`Personal Loan`, CT_Predictions)
 
-
+# Changing Columns Name
+colnames(LR_Dataframe)[1] <- "Actual"
+colnames(LR_Dataframe)[2] <- "Predicted"
+colnames(KNN_Dataframe)[1] <- "Actual"
+colnames(KNN_Dataframe)[2] <- "Predicted"
+colnames(CT_Dataframe)[1] <- "Actual"
+colnames(CT_Dataframe)[2] <- "Predicted"
 
 ```
 
