@@ -625,6 +625,10 @@ data.table(Accuracy_DF)
 
 ```{r create dataframe b}
 
+LR_Dataframe <- data.frame(LR_Validation$`Personal Loan`,logit.reg.pred_round)
+KNN_Dataframe <- data.frame(LR_Validation$`Personal Loan`, Predictions_KNN_Training)
+CT_Dataframe <- data.frame(LR_Validation$`Personal Loan`, CT_Predictions)
+
 
 
 ```
