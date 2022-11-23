@@ -520,7 +520,7 @@ library(rpart.plot)
 CT <- rpart(UB_Training$`Personal Loan` ~ . , data=UB_Training)
 
 # Plotting Regression Tree
-CT_Plot <- rpart.plot(CT, type=0, varlen = 0, box.col=ifelse(CT$frame$var == "<leaf>", '#8db0aa', 'white'), fallen.leaves = FALSE, extra = FALSE, main="Classification Trees", cex.main=2)
+CT_Plot <- rpart.plot(CT, type=0, varlen = 0, box.col=ifelse(CT$frame$var == "<leaf>", '#8db0aa', 'white'), fallen.leaves = FALSE, extra = FALSE, main="Classification Trees", cex.main=1)
 
 ```
 
