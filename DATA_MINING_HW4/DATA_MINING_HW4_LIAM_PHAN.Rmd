@@ -623,29 +623,60 @@ data.table(Accuracy_DF)
 
 ## b. Create Dataframe with the actual outcome, predicted outcome, and each of the tree models
 
+<center>
+
 ```{r create dataframe b}
 
 # Creating Actual VERSUS Predicted Dataframe
-LR_Dataframe <- data.frame(LR_Validation$`Personal Loan`,logit.reg.pred_round)
-KNN_Dataframe <- data.frame(LR_Validation$`Personal Loan`, Predictions_KNN_Training)
-CT_Dataframe <- data.frame(LR_Validation$`Personal Loan`, CT_Predictions)
+LR_Dataframe <- data.frame(logit.reg.pred_round)
+KNN_Dataframe <- data.frame(Predictions_KNN_Training)
+CT_Dataframe <- data.frame(CT_Predictions)
+
+All_Models_Predictions <- cbind(LR_Dataframe,KNN_Dataframe,CT_Dataframe, UB_Validation$`Personal Loan`)
 
 # Changing Columns Name
-colnames(LR_Dataframe)[1] <- "Actual"
-colnames(LR_Dataframe)[2] <- "Predicted"
-colnames(KNN_Dataframe)[1] <- "Actual"
-colnames(KNN_Dataframe)[2] <- "Predicted"
-colnames(CT_Dataframe)[1] <- "Actual"
-colnames(CT_Dataframe)[2] <- "Predicted"
+colnames(All_Models_Predictions)[1] <- "Predicted - LR"
+colnames(All_Models_Predictions)[2] <- "Predicted - KNN"
+colnames(All_Models_Predictions)[3] <- "Predicted - CT"
+colnames(All_Models_Predictions)[4] <- "Actual"
 
-# Showing Dataframes
-DT::datatable(LR_Dataframe, caption = "Using Logistic Regression") 
-DT::datatable(KNN_Dataframe, caption = "Using K-Nearest Neighbor")
-DT::datatable(CT_Dataframe, caption = "Using Classifications Trees") 
+# Showing Dataframes 
+DT::datatable(All_Models_Predictions, caption = "Predicted VS Actual Loan - 3 Models") 
 
 ```
 
+</center>
 
+
+## c. Add two columns, a majority vote predicted of outcome and the average of predited probabilities. Derive a confusion matrix for each method and report the overall accuracy. 
+
+```{r 2 columns}
+
+# Majority Column
+All_Models_Predictions$Majority <- 0
+
+# As Numeric LR
+All_Models_Predictions$`Predicted - LR` <- as.numeric(All_Models_Predictions$`Predicted - LR`)
+All_Models_Predictions$`Predicted - LR` <- All_Models_Predictions$`Predicted - LR` -1
+
+# As Numeric KNN
+All_Models_Predictions$`Predicted - KNN` <- as.numeric(All_Models_Predictions$`Predicted - KNN`)
+All_Models_Predictions$`Predicted - KNN` <- All_Models_Predictions$`Predicted - KNN` -1
+
+# As Numeric CT
+All_Models_Predictions$`Predicted - CT` <- as.numeric(All_Models_Predictions$`Predicted - CT`)
+All_Models_Predictions$`Predicted - CT` <- All_Models_Predictions$`Predicted - CT` -1
+
+# Majority Vote
+for(i in 1:nrow(All_Models_Predictions)){
+  if(sum(All_Models_Predictions[i,1] + All_Models_Predictions[i,2] + All_Models_Predictions[i,3])/3 > 0.5){
+    All_Models_Predictions[i,5] = 1
+    }
+}
+
+
+
+```
 
 
 # <span style="color: #1c6155;">Ex 13.2</span> 
