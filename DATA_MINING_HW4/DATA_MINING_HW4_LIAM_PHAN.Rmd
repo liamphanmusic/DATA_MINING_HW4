@@ -638,6 +638,11 @@ colnames(KNN_Dataframe)[2] <- "Predicted"
 colnames(CT_Dataframe)[1] <- "Actual"
 colnames(CT_Dataframe)[2] <- "Predicted"
 
+# Showing Dataframes
+DT::datatable(LR_Dataframe, caption = "Using Logistic Regression") 
+DT::datatable(KNN_Dataframe, caption = "Using K-Nearest Neighbor")
+DT::datatable(CT_Dataframe, caption = "Using Classifications Trees") 
+
 ```
 
 
