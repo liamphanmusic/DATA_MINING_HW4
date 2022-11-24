@@ -667,6 +667,10 @@ All_Models_Predictions$`Predicted - KNN` <- All_Models_Predictions$`Predicted - 
 All_Models_Predictions$`Predicted - CT` <- as.numeric(All_Models_Predictions$`Predicted - CT`)
 All_Models_Predictions$`Predicted - CT` <- All_Models_Predictions$`Predicted - CT` -1
 
+# As Numeric Actual
+All_Models_Predictions$Actual <- as.numeric(All_Models_Predictions$Actual)
+All_Models_Predictions$Actual <- All_Models_Predictions$Actual -1
+
 # Majority Vote
 for(i in 1:nrow(All_Models_Predictions)){
   if(sum(All_Models_Predictions[i,1] + All_Models_Predictions[i,2] + All_Models_Predictions[i,3])/3 > 0.5){
@@ -674,7 +678,8 @@ for(i in 1:nrow(All_Models_Predictions)){
     }
 }
 
-
+# Show Majority Column
+DT::datatable(All_Models_Predictions, caption = "Predicted VS Actual Loan (Majority Added) - 3 Models") 
 
 ```
 
