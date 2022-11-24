@@ -709,7 +709,7 @@ draw_confusion_matrix_Majority <- function(cm) {
   layout(matrix(c(1,1,2)))
   par(mar=c(2,2,2,2))
   plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
-  title('CONFUSION MATRIX for Majority Vote', cex.main=2)
+  title('CONFUSION MATRIX for Majority of Votes', cex.main=2)
 
   # create the matrix 
   rect(150, 430, 240, 370, col='#1c6155')
@@ -855,9 +855,42 @@ draw_confusion_matrix_Average(Confusion_Matrix_Average)
 
 </center>
 
-> Comments: We can see that this method of Averaging predicted probabilities gave us an accuracy of 98.3% which is slightly better than the Classification Trees Model (CT had an accuracy of 98.2%)
+> Comments: We can see that this method of Averaging predicted probabilities gave us an accuracy of 98.3% which is slightly better than the Classification Trees Model (CT had an accuracy of 98.2%), and also better than Majority of Votes. 
+
+## d. Compare Error Rates for the 3 individuals methods and the 2 ensemble methods. 
+
+```{r Error Rates}
+
+# Computing Error Rates
+
+# Individual Methods
+Error_CT <- 1-Accuracy_CT
+Error_KNN <- 1-Accuracy_KNN
+Error_LR <- 1-Accuracy_LR
+
+# Ensembles Methods
+Error_Majority <- 1-Confusion_Matrix_Majority$overall[1]
+Error_Average <- 1-Confusion_Matrix_Average $overall[1]
+
+# As Data frame 
+Error_Rates_DF <- cbind(Error_LR,Error_KNN,Error_CT,Error_Majority,Error_Average)
+
+# Rounding up to 5 decimals
+Error_Rates_DF <- round(Error_Rates_DF,5)
+
+DT::datatable(Error_Rates_DF, caption = "Error Rates from 3 Individual Method and 2 Ensembles Method") 
+
+```
+
+> Comments: The Smallest Error Rate is from the Average of Predicted Probabilities (Ensemble Method), while the biggest is from the Logistic Regression (Individual Method)
 
 # <span style="color: #1c6155;">Ex 13.2</span> 
+
+
+
+
+
+
 
 # <span style="color: #1c6155;">Ex 15.3</span> 
 
