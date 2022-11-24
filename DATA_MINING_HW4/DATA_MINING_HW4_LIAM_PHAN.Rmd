@@ -876,13 +876,13 @@ Error_Average <- 1-Confusion_Matrix_Average $overall[1]
 Error_Rates_DF <- cbind(Error_LR,Error_KNN,Error_CT,Error_Majority,Error_Average)
 
 # Rounding up to 5 decimals
-Error_Rates_DF <- round(Error_Rates_DF,5)
+Error_Rates_DF <- round(Error_Rates_DF,3)
 
 DT::datatable(Error_Rates_DF, caption = "Error Rates from 3 Individual Method and 2 Ensembles Method") 
 
 ```
 
-> Comments: The Smallest Error Rate is from the Average of Predicted Probabilities (Ensemble Method), while the biggest is from the Logistic Regression (Individual Method)
+> Comments: The Smallest Error Rate is from the Average Predicted Probabilities (Ensemble Method), while the biggest is from the Logistic Regression (Individual Method)
 
 # <span style="color: #1c6155;">Ex 13.2</span> 
 
