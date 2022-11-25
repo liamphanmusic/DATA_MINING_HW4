@@ -415,7 +415,7 @@ UB_Validation_Preprocess <- UB_Validation
 UB_Training_Preprocess <- UB_Training_Preprocess[,-c("Personal Loan","Online","CreditCard","Securities Account","CD Account","Education.1","Education.2","Education.3")]
 
 # Preprocess 
-norm_values <- preProcess(UB_Training_Preprocess,method = c("center","scale"))
+norm_values <- preProcess(UB_Training_Preprocess, method = c("center","scale"))
 
 UB_Training_Preprocess <- predict(norm_values,UB_Training)
 UB_Validation_Preprocess <- predict(norm_values, UB_Validation)
@@ -1350,14 +1350,32 @@ print(paste("We removed", Count_NA, "rows containing NA value"))
 
 ## a. Apply hierarchical clustering to the data using Euclidian distance to the normalized measurements
 
+<center>
+
 ```{r hierarchical clustering}
 
+# Processing Dataset for Hclust
+Scaling <- preProcess(Cereals, method = c("center","scale"))
+Cereals_Preprocess <- predict(Scaling, Cereals)
 
+# Computing Distance - Euclidean
+Distance_Euclidian <- dist(Cereals_Preprocess, method = "euclidean")
 
+# Computing Hierarchical Cluster - Single Linkage
+hc1 <- hclust(Distance_Euclidian, method = "single")
+plot(hc1, hang = -1, ann = TRUE)
 
+# Computing Hierarchical Cluster - Complete Linkage
+hc2 <- hclust(Distance_Euclidian, method = "complete")
+plot(hc2, hang = -1, ann = TRUE)
 
+# Computing Hierarchical Cluster - Centroid Linkage
+hc3 <- hclust(Distance_Euclidian, method = "centroid")
+plot(hc3, hang = -1, ann = TRUE)
 
 ```
+
+</center>
 
 
 # <span style="color: #1c6155;">References</span>
