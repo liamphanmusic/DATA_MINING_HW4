@@ -1082,9 +1082,9 @@ set.seed(1)
 
 library(adabag)
 
-Model_Boost <- boosting(`Competitive?` ~ . , data = EB_Training_Pure)
+#Model_Boost <- boosting(`Competitive?` ~ . , data = EB_Training_Pure)
 
-Prediction_Boost <- predict(Model_Boost, EB_Validation)
+#Prediction_Boost <- predict(Model_Boost, EB_Validation)
 
 ```
 
@@ -1096,7 +1096,7 @@ Prediction_Boost <- predict(Model_Boost, EB_Validation)
 
 <center>
 
-```{r Lift Chart RF}
+```{r Lift Chart BOOST}
 
 
 
