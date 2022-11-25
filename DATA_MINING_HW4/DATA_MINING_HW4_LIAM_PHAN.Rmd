@@ -211,7 +211,7 @@ rm(list = ls())
 
 ```
 
-## Acceptance of Consumer Loan
+## **Acceptance of Consumer Loan**
 
 ```{r loading UniversalBank}
 
@@ -902,7 +902,7 @@ rm(list = ls())
 
 ```
 
-## eBay Auctions - Boosting and Bagging
+## **eBay Auctions - Boosting and Bagging**
 
 ```{r loading eBay Auctions 2}
 
@@ -1317,11 +1317,47 @@ ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 # <span style="color: #1c6155;">Ex 15.3</span> 
 
+## **Customer Rating of Breakfast Cereals**
+
+```{r clean environment 4, include=FALSE}
+
+# Clean Environment
+rm(list = ls()) 
+
+```
+
+## Data Preprocessing
+
+> Remove all cereals with missing values
+
+```{r remove incompletes cases}
+
+# Import Dataset Cereals.csv
+Cereals <- fread("data/Cereals.csv")
+
+Count_Before <- as.numeric(nrow(Cereals))
+
+# NA Omit Cereals
+Cereals <- na.omit(Cereals)
+
+Count_After <- as.numeric(nrow(Cereals))
+
+Count_NA <- Count_Before - Count_After
+
+print(paste("We removed", Count_NA, "rows containing NA value"))
+
+```
+
+## a. Apply hierarchical clustering to the data using Euclidian distance to the normalized measurements
+
+```{r hierarchical clustering}
 
 
 
 
 
+
+```
 
 
 # <span style="color: #1c6155;">References</span>
