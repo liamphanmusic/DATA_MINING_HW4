@@ -981,7 +981,12 @@ DT::datatable(Predictions_Actual_CT, caption = "Actual VS Predicted with Default
 
 ### Confusion Matrix
 
+<center>
+
 ```{r Accuracy and Confusion Matrix CT}
+
+# Set seed
+set.seed(1)
 
 # Confusion Matrix
 Confusion_Matrix_CT_2 <- confusionMatrix(data = CT_Predictions, reference = EB_Validation$`Competitive?`)
@@ -1043,9 +1048,14 @@ draw_confusion_matrix_CT_2(Confusion_Matrix_CT_2)
 > Comments: The Overall Accuracy is 0.81 for this Default Classification Trees.
 
 
-### Decile Lift Chart
+### Lift Chart
+
+<center>
 
 ```{r decile lift chart}
+
+# Set seed
+set.seed(1)
 
 # Load Gains
 library(gains)
@@ -1057,17 +1067,45 @@ ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 ```
 
+</center>
+
+> Comments:
+
 ## b. Run a boosted tree with the same predictors
+
+<center>
 
 ```{r boosting Trees}
 
+# Set seed
+set.seed(1)
+
 library(adabag)
 
-Model_Boost <- boosting(`Competitive?` ~ ., data = EB_Training)
+Model_Boost <- boosting(`Competitive?` ~ . , data = EB_Training_Pure)
 
 Prediction_Boost <- predict(Model_Boost, EB_Validation)
 
 ```
+
+</center>
+
+> Comments: The Overall Accuracy is ...
+
+### Lift Chart
+
+<center>
+
+```{r Lift Chart RF}
+
+
+
+
+```
+
+</center>
+
+> Comments: 
 
 ## c. Run a bagged tree with the same predictors
 
@@ -1075,14 +1113,21 @@ Prediction_Boost <- predict(Model_Boost, EB_Validation)
 
 ```{r bagged Trees}
 
+# Set seed
+set.seed(1)
+
+# Load Package
 library(adabag)
 
+# Predictions
 bag <- bagging(`Competitive?` ~ ., data = EB_Training) 
 
-Prediction_Bagging <- predict(bag, EB_Validation)
+Prediction_Bagging <- predict(bag, EB_Validation, type="class")
+
+Prediction_Bagging_Factor <- as.factor(Prediction_Bagging$class)
 
 # Confusion Matrix
-Confusion_Matrix_BT <- confusionMatrix(data = Prediction_RF, reference = EB_Validation$`Competitive?`)
+Confusion_Matrix_BT <- confusionMatrix(Prediction_Bagging_Factor, EB_Validation$`Competitive?`)
 
 # Create the Function for Confusion Matrix
 draw_confusion_matrix_BT <- function(cm) {
@@ -1139,17 +1184,51 @@ draw_confusion_matrix_BT(Confusion_Matrix_BT)
 
 </center>
 
+> Comments: The Overall Accuracy is 0.853 for this Bagged Tree.
+
+### Lift Chart
+
+<center>
+
+```{r Lift Chart BT}
+
+# Set seed
+set.seed(1)
+
+# Load Gains
+library(gains)
+
+# Compute Gains Chart
+gain_2 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Bagging$prob[,2])
+barplot(gain_2$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_2$depth, xlab = "Percentile",
+ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
+
+
+```
+
+</center>
+
+> Comments:
+
 ## d. Run a random forest with argument mtry = 4
 
 <center>
 
 ```{r random forest}
 
+# Set seed
+set.seed(1)
+
+# Load Package
 library(randomForest)
+
+# Predictions
 
 Random_Forest <- randomForest(EB_Training$`Competitive?` ~ ., data = EB_Training, mtry = 4)
 
-Prediction_RF <- predict(Random_Forest, EB_Validation)
+Prediction_RF <- predict(Random_Forest, EB_Validation, type="class")
+
+Prediction_RF_Prob <- predict(Random_Forest, EB_Validation, type="prob")
 
 # Confusion Matrix
 Confusion_Matrix_RF <- confusionMatrix(data = Prediction_RF, reference = EB_Validation$`Competitive?`)
@@ -1208,7 +1287,33 @@ draw_confusion_matrix_RF(Confusion_Matrix_RF)
 
 </center>
 
+> Comments: The Overall Accuracy is 0.877 for this Random Forest.
+
+### Lift Chart
+
+<center>
+
+```{r Lift Chart RF}
+
+# Load Gains
+library(gains)
+
+# Compute Gains Chart
+gain_3 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_RF_Prob[,2])
+
+barplot(gain_3$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_3$depth, xlab = "Percentile",
+ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
+
+
+```
+
+</center>
+
 > Comments: 
+
+### Compare the bagged tree to the random forest in terms of validation accuracy and lift on first decile. How are the two methods conceptually different? 
+
+> We can see that the bagged tree and the random forest are quite similar (0.853 VS 0.877). We can see that the first decile on both are also quite similar. 
 
 # <span style="color: #1c6155;">Ex 15.3</span> 
 
