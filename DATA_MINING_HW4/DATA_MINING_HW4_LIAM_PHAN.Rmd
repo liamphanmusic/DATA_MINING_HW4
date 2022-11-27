@@ -1443,22 +1443,41 @@ hc1 <- hclust(Distance_Euclidian, method = "single")
 ## Plotting
 plot(hc1, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Single Method")
 
-## Centroid Computation 
-
-
 # Computing Hierarchical Cluster - Complete Linkage --------------
 hc2 <- hclust(Distance_Euclidian, method = "complete")
 
 ## Plotting
 plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method")
 
-## Centroid Computation 
-
 ```
 
 </center>
 
-```{r 2}
+### Centroid for Single Linkage with 5 Clusters
+
+```{r centroid for single linkage}
+
+## Centroid Computation 
+clusters1 <- cutree(hc1, k=5)
+cluster_center1 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters1),mean)
+cluster_center1
+
+```
+
+
+### Centroid for Complete Linkage with 5 Clusters
+
+```{r centroid for complete linkage}
+
+## Centroid Computation 
+clusters2 <- cutree(hc2, k=5)
+cluster_center2 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters2),mean)
+cluster_center2
+
+```
+
+
+```{r }
 
 barplot(hc1$height,
   names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
@@ -1466,9 +1485,7 @@ barplot(hc1$height,
 
 rect.hclust(hc1, k = k1, border = 2:5)
 
-
 ```
-
 
 # <span style="color: #1c6155;">References</span>
 
