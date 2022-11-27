@@ -1563,30 +1563,30 @@ rect.hclust(hc2, k = 3, border = 2:5)
 
 > Comments: 
 
-## d. Elementary public schools - "healthy cereals" 
+## d. Elementary public schools
 
 ### Find Cluster of "healthy cereals"
 
+Healthy Cereals Should have Low Calories, Low Sugars, High Proteins and High Fibers according to **pickyeaterblog.com**
+
 ```{r Heathly Cereals}
 
+# Set Seed
+set.seed(1)
 
-
-
-
+# Centroid Computation for k=3 and Complete Linkage
+clusters3 <- cutree(hc2, k=3)
+cluster_center3 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters3),mean)
+cluster_center3
 
 ```
+
+> We can see that Cluster 1 Look mostly like the best cluster in terms of average, having low calories, high protein, high fiber and low sugars (not the lowest but still low). 
 
 ### Should be the data normalized?
 
 
 
-
-### Find Cluster of "healthy cereals"
-
-
-
-
-### Should the data be normalized ?
 
 
 
@@ -1606,3 +1606,5 @@ rect.hclust(hc2, k = 3, border = 2:5)
 [For hierarchical clustering, how to find the “center” in each cluster in R](https://stackoverflow.com/questions/60643219/for-hierarchical-clustering-how-to-find-the-center-in-each-cluster-in-r)
 
 [Determining The Optimal Number Of Clusters: 3 Must Know Methods](http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determiningthe-optimal-number-of-clusters-3-must-know-methods/)
+
+[10 Tips On How To Find The Healthiest Cereals - pickyeaterblog.com](https://pickyeaterblog.com/the-picky-eaters-10-healthiest-breakfast-cereals/)
