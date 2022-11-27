@@ -1468,7 +1468,7 @@ rect.hclust(hc2, k = k1, border = 2:5)
 
 </center>
 
-> Comments:
+> Comments: Single Linkage tend to overfit some cereals to the red cluster while Complete linkage give a bit more say to the classification to other clusters. 
 
 ### Centroid for Single Linkage with 5 Clusters
 
@@ -1495,7 +1495,7 @@ cluster_center2
 
 ## b. Which method leads to the most insightful or meaningful clusters ?
 
-> 
+> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. 
 
 ## c. Choose one of the methods. How many clusters would you use? What distance is used for this cutoff?
 
@@ -1523,7 +1523,7 @@ sort(hc2$height)
 
 </center>
 
-> Comments: 
+> Comments: To find the optimal Cluster Number from our Dendrogram, we would compute the height largest variation between a cluster merge. Then having a Barplot help us finding a range to compare, that would be the 3 or 4 clusters hierarchy. By checking Cluster Height and sorting it, we can then compute line on the Dendrogram to precisely get the differences of height after a merge and look up which Cluster number to choose from. 
 
 <center>
 
@@ -1544,14 +1544,13 @@ legend(11.5, legend="Δ = 2.24", bty = "n", text.col = "#1c6155", cex = 0.7)
 
 </center>
 
-
-> Comments:
+> Comments: To get our optimal Cluster number, we would get the maximum distance of height in the Dendrogram, that lead us to a **k=3** since the largest delta is **2.24**. 
 
 ### Final Cluster Number 
 
 <center>
 
-```{r Checking Clusters Height}
+```{r Checking Clusters Height 2}
 
 ## Plotting with 3 Clusters
 plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="with 3 Clusters")
@@ -1561,7 +1560,7 @@ rect.hclust(hc2, k = 3, border = 2:5)
 
 </center>
 
-> Comments: 
+> Comments: This would be the most optimal cluster number with the complete linkage method on hierarchial clustering.
 
 ## d. Elementary public schools
 
@@ -1581,14 +1580,63 @@ cluster_center3
 
 ```
 
-> We can see that Cluster 1 Look mostly like the best cluster in terms of average, having low calories, high protein, high fiber and low sugars (not the lowest but still low). 
+> Comments: We can see that Cluster 1 Look mostly like the best cluster in terms of averages, having low calories, high protein, high fiber and low sugars (not the lowest but still low). In bonus, the rating is also in favor of this cluster.
+
+```{r Checking Clusters Height 3}
+
+## Plotting with 3 Clusters
+plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="with 3 Clusters")
+rect.hclust(hc2, k = 3, border = 2:5)
+
+```
+
+```{r Checking Cluster Members}
+
+# Cluster Members
+split(Cereals, clusters3)
+
+```
+
+> Comments: We can see that first cluster contains 3 different healthy cereals, but perhaps variety should be a bit more in focus since we are asked for different cereals everyday, what happens if we cluster by 4 instead of 3 ?
+
+```{r Heathly Cereals 2}
+
+# Set Seed
+set.seed(1)
+
+# Centroid Computation for k=3 and Complete Linkage
+clusters4 <- cutree(hc2, k=4)
+cluster_center4 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters4),mean)
+cluster_center4
+
+```
+
+> Comments: First Cluster is having low calories, high protein, low fat and high fiber. The rating is also quite high. There is also Cluster 4 which is having low calories, low protein, second place for fiber, low sugars and high rating. Let's see if this 4th cluster give us a bit more cereals for the public school. 
+
+<center>
+
+```{r Checking Clusters Number}
+
+## Plotting with 4 Clusters
+plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="with 4 Clusters")
+rect.hclust(hc2, k = 4, border = 2:5)
+
+```
+
+</center>
+
+```{r Checking Cluster Members 2}
+
+# Cluster Members
+split(Cereals, clusters4)
+
+```
+
+> Comments: First Cluster give us the same product, and cluster 4 give us 9 more cereals that could be considered healthy, we could choose among the best healthy to complete the breakfast of the public school without having to compromise variety. But for this exercice, the official answer would be cluster 1 in our cluster method with k=3. 
 
 ### Should be the data normalized?
 
-
-
-
-
+> For the hierarchical clustering, we should normalize the dataset since we are dealing with euclidean distances in the process of clustering. Nevertheless, for interpretability, we should get comprehensive data of each members of our clusters, we would use the non-preprocess dataset for so and reajust the number of clusters accordingly to our goal. 
 
 
 # <span style="color: #1c6155;">References</span>
