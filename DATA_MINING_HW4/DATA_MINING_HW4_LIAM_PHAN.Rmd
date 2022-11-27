@@ -1419,6 +1419,10 @@ print(paste("We removed", Count_NA, "rows containing NA value"))
 
 ```{r hierarchical clustering}
 
+# Library
+library(FactoMineR)
+library(factoextra)
+
 # Processing Dataset for Hclust
 Scaling <- preProcess(Cereals, method = c("center","scale"))
 Cereals_Preprocess <- predict(Scaling, Cereals)
@@ -1428,11 +1432,27 @@ Distance_Euclidian <- dist(Cereals_Preprocess, method = "euclidean")
 
 # Computing Hierarchical Cluster - Single Linkage
 hc1 <- hclust(Distance_Euclidian, method = "single")
-plot(hc1, hang = -1, ann = TRUE)
+
+# Optimal K for single linkage on Hierarchical Cluster
+fviz_nbclust(hc1, method = "silhouette") +
+  labs(subtitle = "Silhouette method")
+
+optimal_K1 <- 8
+
+# Plotting
+fviz_dend(hc1, rect = TRUE, cex = 0.5, k=optimal_K1)
 
 # Computing Hierarchical Cluster - Complete Linkage
 hc2 <- hclust(Distance_Euclidian, method = "complete")
-plot(hc2, hang = -1, ann = TRUE)
+
+# Optimal K for single linkage on Hierarchical Cluster
+barplot(hc2$height,
+  names.arg = (nrow(Cereals_Preprocess) - 1):1)
+
+optimal_K2 <- 3
+
+# Plotting
+fviz_dend(hc2, rect = TRUE, cex = 0.5, k=optimal_K2)
 
 
 ```
@@ -1452,3 +1472,4 @@ plot(hc2, hang = -1, ann = TRUE)
 
 [How does ties.method argument in R's Rank Function Work?](https://stats.stackexchange.com/questions/34008/how-does-ties-method-argument-of-rs-rank-function-work)
 
+[For hierarchical clustering, how to find the “center” in each cluster in R](https://stackoverflow.com/questions/60643219/for-hierarchical-clustering-how-to-find-the-center-in-each-cluster-in-r)
