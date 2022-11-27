@@ -1477,7 +1477,7 @@ rect.hclust(hc2, k = k1, border = 2:5)
 ## Centroid Computation 
 clusters1 <- cutree(hc1, k=k1)
 cluster_center1 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters1),mean)
-cluster_center1
+DT::datatable(round(cluster_center1,2), caption = "Centroid Single Linkage")
 
 ```
 
@@ -1489,7 +1489,7 @@ cluster_center1
 ## Centroid Computation 
 clusters2 <- cutree(hc2, k=k1)
 cluster_center2 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters2),mean)
-cluster_center2
+DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 
 ```
 
@@ -1576,11 +1576,15 @@ set.seed(1)
 # Centroid Computation for k=3 and Complete Linkage
 clusters3 <- cutree(hc2, k=3)
 cluster_center3 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters3),mean)
-cluster_center3
+DT::datatable(round(cluster_center3,2), caption = "Centroid Complete Linkage with k=3")
+
+
 
 ```
 
 > Comments: We can see that Cluster 1 Look mostly like the best cluster in terms of averages, having low calories, high protein, high fiber and low sugars (not the lowest but still low). In bonus, the rating is also in favor of this cluster.
+
+<center>
 
 ```{r Checking Clusters Height 3}
 
@@ -1590,10 +1594,20 @@ rect.hclust(hc2, k = 3, border = 2:5)
 
 ```
 
+</center>
+
 ```{r Checking Cluster Members}
 
 # Cluster Members
-split(Cereals, clusters3)
+split1 <- split(Cereals, clusters3)
+
+cluster_1 <- split1$`1`
+cluster_2 <- split1$`2`
+cluster_3 <- split1$`3`
+
+DT::datatable(cluster_1, caption = "Cluster 1 - Considered Healthy")
+DT::datatable(cluster_2, caption = "Cluster 2")
+DT::datatable(cluster_3, caption = "Cluster 3" )
 
 ```
 
@@ -1607,7 +1621,7 @@ set.seed(1)
 # Centroid Computation for k=3 and Complete Linkage
 clusters4 <- cutree(hc2, k=4)
 cluster_center4 = aggregate(Cereals_Preprocess[,4:16],list(cluster=clusters4),mean)
-cluster_center4
+DT::datatable(round(cluster_center4,2), caption = "Centroid Complete Linkage with k=4" )
 
 ```
 
@@ -1628,7 +1642,17 @@ rect.hclust(hc2, k = 4, border = 2:5)
 ```{r Checking Cluster Members 2}
 
 # Cluster Members
-split(Cereals, clusters4)
+split2 <- split(Cereals, clusters4)
+
+cluster_2_1 <- split2$`1`
+cluster_2_2 <- split2$`2`
+cluster_2_3 <- split2$`3`
+cluster_2_4 <- split2$`4`
+
+DT::datatable(cluster_2_1, caption = "Cluster 1 - Considered Healthy" )
+DT::datatable(cluster_2_2, caption = "Cluster 2" )
+DT::datatable(cluster_2_3, caption = "Cluster 3" )
+DT::datatable(cluster_2_4, caption = "Cluster 4 - Considered Healthy" )
 
 ```
 
