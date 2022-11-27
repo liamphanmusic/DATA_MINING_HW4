@@ -1444,22 +1444,12 @@ Distance_Euclidian <- dist(Cereals_Preprocess, method = "euclidean")
 # Computing Hierarchical Cluster - Single Linkage --------------
 hc1 <- hclust(Distance_Euclidian, method = "single")
 
-## Optimal K for single linkage on Hierarchical Cluster
-
-## Elbow Method
-fviz_nbclust(Cereals_Preprocess[,c(4:16)], FUN = hcut, method = "wss")+ geom_vline(xintercept = 5, linetype = 2)+
-  labs(subtitle = "Elbow method")
-
-## Silhouette Method
-fviz_nbclust(Cereals_Preprocess[,c(4:16)], FUN = hcut, method = "silhouette")+
-  labs(subtitle = "Silhouette method")
-
-## Gap Statistics Method
-fviz_nbclust(Cereals_Preprocess[,c(4:16)], FUN = hcut, nstart = 25,  method = "gap_stat", nboot = 50)+
-  labs(subtitle = "Gap statistic method")
+barplot(hc1$height,
+  names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
+)
 
 ## Optimal K for Single Linkage
-k1 <- 5
+k1 <- 10
 
 # Members
 members_1 <- cutree(tree = hc1, k = k1)
@@ -1471,22 +1461,12 @@ rect.hclust(hc1, k = k1, border = 2:5)
 # Computing Hierarchical Cluster - Complete Linkage --------------
 hc2 <- hclust(Distance_Euclidian, method = "complete")
 
-## Optimal K for complete linkage on Hierarchical Cluster
-
-## Elbow Method
-fviz_nbclust(Cereals_Preprocess[,c(4:16)], FUN = hcut, method = "wss")+ geom_vline(xintercept = 5, linetype = 2)+
-  labs(subtitle = "Elbow method")
-
-## Silhouette Method
-fviz_nbclust(Cereals_Preprocess[,c(4:16)], FUN = hcut, method = "silhouette")+
-  labs(subtitle = "Silhouette method")
-
-## Gap Statistics Method
-fviz_nbclust(Cereals_Preprocess[,c(4:16)], FUN = hcut, nstart = 25,  method = "gap_stat", nboot = 50)+
-  labs(subtitle = "Gap statistic method")
+barplot(hc2$height,
+  names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
+)
 
 ## Optimal K for Complete Linkage
-k2 <- 5
+k2 <- 3
 
 # Members
 members_2 <- cutree(tree = hc2, k = k2)
