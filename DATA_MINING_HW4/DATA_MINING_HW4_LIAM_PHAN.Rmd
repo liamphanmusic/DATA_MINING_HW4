@@ -53,6 +53,8 @@ library(nnet) # Neural Network
 library(manipulateWidget) # Plotly Combiner
 library(rpart) # Regression Tree
 library(rpart.plot) # Plotting Regression Tree
+library(gains) # Lift Chart
+library(adabag) # Boosting and Bagging
 
 ```
 
@@ -1061,7 +1063,7 @@ set.seed(1)
 library(gains)
 
 # Compute Gains Chart
-gain <- gains(EB_Validation_Pure$`Competitive?`, CT_Predictions_Prob[,2])
+gain <- gains(EB_Validation_Pure$`Competitive?`, CT_Predictions_Prob[,2], groups = 10, ties.method=c("first"))
 barplot(gain$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
@@ -1082,9 +1084,65 @@ set.seed(1)
 
 library(adabag)
 
-#Model_Boost <- boosting(`Competitive?` ~ . , data = EB_Training_Pure)
+# Predictions - mfinal = 7 because my computer could not get above it...
+boost <- boosting(`Competitive?` ~ ., data = EB_Training, boos=TRUE, mfinal=7) 
 
-#Prediction_Boost <- predict(Model_Boost, EB_Validation)
+Prediction_Boost <- predict(boost, EB_Validation, type="class")
+
+Prediction_Boost_Factor <- as.factor(Prediction_Boost$class)
+
+# Confusion Matrix
+Confusion_Matrix_BOOST <- confusionMatrix(Prediction_Boost_Factor, EB_Validation$`Competitive?`)
+
+# Create the Function for Confusion Matrix
+draw_confusion_matrix_BOOST <- function(cm) {
+
+  layout(matrix(c(1,1,2)))
+  par(mar=c(2,2,2,2))
+  plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
+  title('CONFUSION MATRIX for Boosted Tree', cex.main=2)
+
+  # create the matrix 
+  rect(150, 430, 240, 370, col='#1c6155')
+  text(195, 435, 'No', cex=1.2)
+  rect(250, 430, 340, 370, col='#1c615570')
+  text(295, 435, 'Yes', cex=1.2)
+  text(125, 370, 'Predicted', cex=1.3, srt=90, font=2)
+  text(245, 450, 'Actual', cex=1.3, font=2)
+  rect(150, 305, 240, 365, col='#1c615570')
+  rect(250, 305, 340, 365, col='#1c6155')
+  text(140, 400, 'No', cex=1.2, srt=90)
+  text(140, 335, 'Yes', cex=1.2, srt=90)
+
+  # add in the cm results 
+  res <- as.numeric(cm$table)
+  text(195, 400, res[1], cex=1.6, font=2, col='white')
+  text(195, 335, res[2], cex=1.6, font=2, col='white')
+  text(295, 400, res[3], cex=1.6, font=2, col='white')
+  text(295, 335, res[4], cex=1.6, font=2, col='white')
+
+  # add in the specifics 
+  plot(c(100, 0), c(100, 0), type = "n", xlab="", ylab="", main = "DETAILS", xaxt='n', yaxt='n')
+  text(10, 85, names(cm$byClass[1]), cex=1.2, font=2)
+  text(10, 70, round(as.numeric(cm$byClass[1]), 3), cex=1.2)
+  text(30, 85, names(cm$byClass[2]), cex=1.2, font=2)
+  text(30, 70, round(as.numeric(cm$byClass[2]), 3), cex=1.2)
+  text(50, 85, names(cm$byClass[5]), cex=1.2, font=2)
+  text(50, 70, round(as.numeric(cm$byClass[5]), 3), cex=1.2)
+  text(70, 85, names(cm$byClass[6]), cex=1.2, font=2)
+  text(70, 70, round(as.numeric(cm$byClass[6]), 3), cex=1.2)
+  text(90, 85, names(cm$byClass[7]), cex=1.2, font=2)
+  text(90, 70, round(as.numeric(cm$byClass[7]), 3), cex=1.2)
+
+  # add in the accuracy information 
+  text(30, 35, names(cm$overall[1]), cex=1.5, font=2)
+  text(30, 20, round(as.numeric(cm$overall[1]), 3), cex=1.4)
+  text(70, 35, names(cm$overall[2]), cex=1.5, font=2)
+  text(70, 20, round(as.numeric(cm$overall[2]), 3), cex=1.4)
+}
+
+# Plot the Confusion Matrix
+draw_confusion_matrix_BOOST(Confusion_Matrix_BOOST)
 
 ```
 
@@ -1098,7 +1156,16 @@ library(adabag)
 
 ```{r Lift Chart BOOST}
 
+# Set seed
+set.seed(1)
 
+# Load Gains
+library(gains)
+
+# Compute Gains Chart
+gain_1 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Boost$prob[,2], groups = 10, ties.method=c("first"))
+barplot(gain_1$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_1$depth, xlab = "Percentile",
+ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 
 ```
@@ -1199,10 +1266,9 @@ set.seed(1)
 library(gains)
 
 # Compute Gains Chart
-gain_2 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Bagging$prob[,2])
+gain_2 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Bagging$prob[,2],groups = 10, ties.method=c("first"))
 barplot(gain_2$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_2$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
-
 
 ```
 
@@ -1223,7 +1289,6 @@ set.seed(1)
 library(randomForest)
 
 # Predictions
-
 Random_Forest <- randomForest(EB_Training$`Competitive?` ~ ., data = EB_Training, mtry = 4)
 
 Prediction_RF <- predict(Random_Forest, EB_Validation, type="class")
@@ -1299,7 +1364,7 @@ draw_confusion_matrix_RF(Confusion_Matrix_RF)
 library(gains)
 
 # Compute Gains Chart
-gain_3 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_RF_Prob[,2])
+gain_3 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_RF_Prob[,2],groups = 10, ties.method=c("first"))
 
 barplot(gain_3$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_3$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
@@ -1385,4 +1450,8 @@ plot(hc3, hang = -1, ann = TRUE)
 [Data Mining for Business Analytics: Concepts, Techniques, and Applications in R](https://www.wiley.com/en-us/Data+Mining+for+Business+Analytics:+Concepts,+Techniques,+and+Applications+in+R-p-9781118879368)
 
 [Summarytools in R Markdown Documents](https://cran.r-project.org/web/packages/summarytools/vignettes/rmarkdown.html)
+
+[R FUNCTION : GAIN AND LIFT TABLE](https://www.listendata.com/2015/06/r-function-gain-and-lift-table.html)
+
+[How does ties.method argument in R's Rank Function Work?](https://stats.stackexchange.com/questions/34008/how-does-ties-method-argument-of-rs-rank-function-work)
 
