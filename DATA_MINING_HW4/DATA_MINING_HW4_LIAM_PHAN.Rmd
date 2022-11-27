@@ -1434,9 +1434,6 @@ plot(hc1, hang = -1, ann = TRUE)
 hc2 <- hclust(Distance_Euclidian, method = "complete")
 plot(hc2, hang = -1, ann = TRUE)
 
-# Computing Hierarchical Cluster - Centroid Linkage
-hc3 <- hclust(Distance_Euclidian, method = "centroid")
-plot(hc3, hang = -1, ann = TRUE)
 
 ```
 
