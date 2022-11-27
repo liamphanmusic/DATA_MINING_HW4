@@ -1428,11 +1428,7 @@ print(paste("We removed", Count_NA, "rows containing NA value"))
 set.seed(1)
 
 # Library
-library(FactoMineR)
-library(factoextra)
-library(NbClust)
 library(cluster)
-require(graphics)
 
 # Processing Dataset for Hclust
 Scaling <- preProcess(Cereals, method = c("center","scale"))
@@ -1444,40 +1440,34 @@ Distance_Euclidian <- dist(Cereals_Preprocess, method = "euclidean")
 # Computing Hierarchical Cluster - Single Linkage --------------
 hc1 <- hclust(Distance_Euclidian, method = "single")
 
-barplot(hc1$height,
-  names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
-)
-
-## Optimal K for Single Linkage
-k1 <- 10
-
-# Members
-members_1 <- cutree(tree = hc1, k = k1)
-
 ## Plotting
-plot(hc1, hang = -1, ann = FALSE, labels=Cereals_Preprocess$name, cex=0.5)
-rect.hclust(hc1, k = k1, border = 2:5)
+plot(hc1, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Single Method")
+
+## Centroid Computation 
+
 
 # Computing Hierarchical Cluster - Complete Linkage --------------
 hc2 <- hclust(Distance_Euclidian, method = "complete")
 
-barplot(hc2$height,
-  names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
-)
-
-## Optimal K for Complete Linkage
-k2 <- 3
-
-# Members
-members_2 <- cutree(tree = hc2, k = k2)
-
 ## Plotting
-plot(hc2, hang = -1, ann = FALSE, labels=Cereals_Preprocess$name, cex=0.5)
-rect.hclust(hc1, k = k2, border = 2:5)
+plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method")
+
+## Centroid Computation 
 
 ```
 
 </center>
+
+```{r 2}
+
+barplot(hc1$height,
+  names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
+)
+
+rect.hclust(hc1, k = k1, border = 2:5)
+
+
+```
 
 
 # <span style="color: #1c6155;">References</span>
