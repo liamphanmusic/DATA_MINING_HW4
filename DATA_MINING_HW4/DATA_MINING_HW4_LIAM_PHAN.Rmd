@@ -1088,8 +1088,17 @@ set.seed(1)
 
 library(adabag)
 
+# Duplicate Dataset for Boosting
+EB_Training_Factor <- EB_Training
+
+# Factor Before Boosting
+EB_Training_Factor$Category <- factor(EB_Training_Factor$Category)
+EB_Training_Factor$currency <- factor(EB_Training_Factor$currency)
+EB_Training_Factor$endDay <- factor(EB_Training_Factor$endDay)
+
+
 # Predictions - mfinal = 7 because my computer could not get above it...
-boost <- boosting(`Competitive?` ~ ., data = EB_Training, boos=TRUE, mfinal=7) 
+boost <- boosting(`Competitive?` ~ ., data = EB_Training_Factor) 
 
 Prediction_Boost <- predict(boost, EB_Validation, type="class")
 
@@ -1459,6 +1468,8 @@ rect.hclust(hc2, k = k1, border = 2:5)
 
 </center>
 
+> Comments:
+
 ### Centroid for Single Linkage with 5 Clusters
 
 ```{r centroid for single linkage}
@@ -1482,16 +1493,103 @@ cluster_center2
 
 ```
 
+## b. Which method leads to the most insightful or meaningful clusters ?
 
-```{r }
+> 
 
-barplot(hc1$height,
+## c. Choose one of the methods. How many clusters would you use? What distance is used for this cutoff?
+
+### Finding Optimal Clusters Number using Height
+
+<center>
+
+```{r choose 1 method }
+
+# Set seed
+set.seed(1)
+
+# Plotting
+plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="without Clusters")
+
+# Height of Cluster in a Barplot
+barplot(hc2$height,
   names.arg = (nrow(Cereals_Preprocess) - 1):1 # show the number of cluster below each bars
-)
+, xlab = "Clusters", ylab= "Height", main="Barplot of Clusters Height")
 
-rect.hclust(hc1, k = k1, border = 2:5)
+sort(hc2$height)
+
 
 ```
+
+</center>
+
+> Comments: 
+
+<center>
+
+```{r Checking Clusters Height}
+
+# Checking Clusters
+plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="without Clusters")
+
+abline(h=8.4865020 , col="#1A79A7")
+abline(h=7.4676249 , col="#1A79A7")
+legend(9.3, legend="Δ = 1.02", bty = "n", text.col = "#1A79A7", cex = 0.7)
+
+abline(h=11.0703451 , col="#1c6155")
+abline(h= 8.8350502 , col="#1c6155")
+legend(11.5, legend="Δ = 2.24", bty = "n", text.col = "#1c6155", cex = 0.7)
+
+```
+
+</center>
+
+
+> Comments:
+
+### Final Cluster Number 
+
+<center>
+
+```{r Checking Clusters Height}
+
+## Plotting with 3 Clusters
+plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="with 3 Clusters")
+rect.hclust(hc2, k = 3, border = 2:5)
+
+```
+
+</center>
+
+> Comments: 
+
+## d. Elementary public schools - "healthy cereals" 
+
+### Find Cluster of "healthy cereals"
+
+```{r Heathly Cereals}
+
+
+
+
+
+
+```
+
+### Should be the data normalized?
+
+
+
+
+### Find Cluster of "healthy cereals"
+
+
+
+
+### Should the data be normalized ?
+
+
+
 
 # <span style="color: #1c6155;">References</span>
 
