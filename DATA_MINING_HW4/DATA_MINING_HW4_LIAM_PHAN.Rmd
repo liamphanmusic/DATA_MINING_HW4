@@ -1534,11 +1534,11 @@ plot(hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess$name, cex=0.5, main="
 
 abline(h=8.4865020 , col="#1A79A7")
 abline(h=7.4676249 , col="#1A79A7")
-legend(9.3, legend="Δ = 1.02", bty = "n", text.col = "#1A79A7", cex = 0.7)
+legend(9.3, legend="Delta = 1.02", bty = "n", text.col = "#1A79A7", cex = 0.7)
 
 abline(h=11.0703451 , col="#1c6155")
 abline(h= 8.8350502 , col="#1c6155")
-legend(11.5, legend="Δ = 2.24", bty = "n", text.col = "#1c6155", cex = 0.7)
+legend(11.5, legend="Delta = 2.24", bty = "n", text.col = "#1c6155", cex = 0.7)
 
 ```
 
