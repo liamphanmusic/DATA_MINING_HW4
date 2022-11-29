@@ -58,7 +58,8 @@ library(adabag) # Boosting and Bagging
 library(FactoMineR) # Clustering
 library(factoextra) # Clustering
 library(NbClust) # Optimal Clustering
-
+library(qacr) # Clusters Profiling
+library(dendextend) # Cluster Dendrogram
 
 ```
 
@@ -265,8 +266,7 @@ print(paste("Proportion in Training is", Training_Proportion_Check*100,"%", "and
 
 ## a. Fit Models to the data for (1) logistic regression, (2) k-nearest neighbors with *k* = 3, and (3) Classification trees.
 
-> Use Personal Loan as the outcome variable. Report the validation confusion matrix for each of the three models. 
-
+## Use Personal Loan as the outcome variable. Report the validation confusion matrix for each of the three models. 
 
 ### <span style="color: #1c6155;">Logistic Regression</span> 
 
@@ -289,15 +289,15 @@ LR_Validation$Education <- factor(LR_Validation$Education, levels = c(1, 2, 3), 
 
 # Run logistic regression
 logit.reg <- glm(`Personal Loan` ~ ., data = LR_Training, family = "binomial")
-
 options(scipen=999)
 
+# Give the Summary of the logistic Regression
 summary(logit.reg)
 
 
 ```
 
-> Comments: We can see that **Mortgage**, **Securities Account**, **Age** and **Experience** are not statistically significant in this logistic regression. **Income**, **EducationGraduate** and **EducationAdvanced/Professional** with **CD Account** seems to be really significant in this model with a very low p-value. **EducationAdvanced/Professional**, **EducationGraduate** and **CD Account** seems to have the most positive impact in wether or not a individual may contract a Loan or not.
+> Comments: We can see that **Mortgage**, **Securities Account**, **Age** and **Experience** are not statistically significant in this logistic regression. **Income**, **EducationGraduate** and **EducationAdvanced/Professional** with **CD Account** seems to be really significant in this model with a very low p-value. **EducationAdvanced/Professional**, **EducationGraduate** and **CD Account** seems to have the most positive impact in wether or not a individual may contract a Loan or not. One possibility would be to use different method for variable selections in this logistic regression (that would certainly remove some unsignificant variables) or even rescale variable by log in case of some skewed distributions. In this case removing variables would certainly improve the model by adding more weight to the most important and statistically significant variables and thus the predictions. In our case, we only mention the possibility but we do not go through those steps, since we are trying to compare all variables predictors to each of the models without optimizing it and to have a fair comparison. 
 
 #### Predictions and Confusion Matrix
 
