@@ -1053,7 +1053,7 @@ draw_confusion_matrix_CT_2(Confusion_Matrix_CT_2)
 
 </center>
 
-> Comments: The Overall Accuracy is 0.81 for this Default Classification Trees.
+> Comments: The Overall Accuracy is 0.81 for this Default Classification Trees with a specificity of 0.716 and sensitivity of 0.915. The Model is better at True Positive than True Negative. 
 
 
 ### Lift Chart
@@ -1072,6 +1072,10 @@ library(gains)
 gain <- gains(EB_Validation_Pure$`Competitive?`, CT_Predictions_Prob[,2], groups = 10, ties.method=c("first"))
 barplot(gain$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
+
+# Top Decile
+library(lift)
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(CT_Predictions_Prob[,2], EB_Validation_Pure$`Competitive?`)))
 
 ```
 
