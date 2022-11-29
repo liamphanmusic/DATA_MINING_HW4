@@ -1103,7 +1103,7 @@ EB_Training_Factor$currency <- factor(EB_Training_Factor$currency)
 EB_Training_Factor$endDay <- factor(EB_Training_Factor$endDay)
 
 
-# Predictions - mfinal = 7 because my computer could not get above it...
+# Predictions 
 boost <- boosting(`Competitive?` ~ ., data = EB_Training_Factor) 
 
 Prediction_Boost <- predict(boost, EB_Validation, type="class")
@@ -1119,7 +1119,7 @@ draw_confusion_matrix_BOOST <- function(cm) {
   layout(matrix(c(1,1,2)))
   par(mar=c(2,2,2,2))
   plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
-  title('CONFUSION MATRIX for Boosted Tree', cex.main=2)
+  title('CONFUSION MATRIX for Boosted Trees', cex.main=2)
 
   # create the matrix 
   rect(150, 430, 240, 370, col='#1c6155')
@@ -1167,7 +1167,7 @@ draw_confusion_matrix_BOOST(Confusion_Matrix_BOOST)
 
 </center>
 
-> Comments: The Overall Accuracy is ...
+> Comments: The Overall Accuracy is 0.886 with a balanced Sensitivity and Specificity, both less than 0.9. The Specificity is better with Boosted Tree than Default Classification Trees. 
 
 ### Lift Chart
 
@@ -1185,6 +1185,10 @@ library(gains)
 gain_1 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Boost$prob[,2], groups = 10, ties.method=c("first"))
 barplot(gain_1$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_1$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
+
+# Top Decile
+library(lift)
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Boost$prob[,2], EB_Validation_Pure$`Competitive?`)))
 
 
 ```
@@ -1221,7 +1225,7 @@ draw_confusion_matrix_BT <- function(cm) {
   layout(matrix(c(1,1,2)))
   par(mar=c(2,2,2,2))
   plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
-  title('CONFUSION MATRIX for Bagged Tree', cex.main=2)
+  title('CONFUSION MATRIX for Bagged Trees', cex.main=2)
 
   # create the matrix 
   rect(150, 430, 240, 370, col='#1c6155')
@@ -1270,7 +1274,7 @@ draw_confusion_matrix_BT(Confusion_Matrix_BT)
 
 </center>
 
-> Comments: The Overall Accuracy is 0.853 for this Bagged Tree.
+> Comments: The Overall Accuracy is 0.853 for this Bagged Tree. The Sensitivity is larger than the Specificity such as in the Default Classification Trees and our Specificity is lower than the boosted Trees model. 
 
 ### Lift Chart
 
@@ -1288,6 +1292,10 @@ library(gains)
 gain_2 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Bagging$prob[,2],groups = 10, ties.method=c("first"))
 barplot(gain_2$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_2$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
+
+# Top Decile
+library(lift)
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Bagging$prob[,2], EB_Validation_Pure$`Competitive?`)))
 
 ```
 
@@ -1371,7 +1379,7 @@ draw_confusion_matrix_RF(Confusion_Matrix_RF)
 
 </center>
 
-> Comments: The Overall Accuracy is 0.877 for this Random Forest.
+> Comments: The Overall Accuracy is 0.877 for this Random Forest, with a high Specificity but balanced as well with Sensitivity. The Specificity is also higher than previous model (apart from boosted trees). 
 
 ### Lift Chart
 
@@ -1388,6 +1396,9 @@ gain_3 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_RF_Prob[,2],groups
 barplot(gain_3$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_3$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
+# Top Decile
+library(lift)
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_RF_Prob[,2], EB_Validation_Pure$`Competitive?`)))
 
 ```
 
@@ -1397,7 +1408,7 @@ ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 ### Compare the bagged tree to the random forest in terms of validation accuracy and lift on first decile. How are the two methods conceptually different? 
 
-> We can see that the bagged tree and the random forest are quite similar (0.853 VS 0.877). We can see that the first decile on both are also quite similar. 
+> We can see that the bagged tree and the random forest are quite similar in accuracy: 0.853 VS 0.877. We can see that the first decile on both are the same.  
 
 # <span style="color: #1c6155;">Ex 15.3</span> 
 
