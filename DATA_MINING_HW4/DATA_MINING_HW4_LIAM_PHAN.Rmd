@@ -182,14 +182,14 @@ gg_miss_var(eBay, show_pct = TRUE)
 ```{r preview of dataset UniversalBank}
 
 # Preview of the Dataset
-DT::datatable(head(eBay,2))
+DT::datatable(head(UniversalBank,2))
 
 ```
 
 
 ```{r summary of dataset UniversalBank,results="asis"}
 
-dfSummary(eBay, 
+dfSummary(UniversalBank, 
           plain.ascii  = FALSE, 
           style        = "grid", 
           graph.magnif = 0.75, 
@@ -205,7 +205,7 @@ dfSummary(eBay,
 ```{r missing variable plot UniversalBank}
 
 # Missing Variables Plot for the Dataset
-gg_miss_var(eBay, show_pct = TRUE)
+gg_miss_var(UniversalBank, show_pct = TRUE)
 
 ```
 
