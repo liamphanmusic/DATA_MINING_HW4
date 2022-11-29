@@ -266,7 +266,7 @@ print(paste("Proportion in Training is", Training_Proportion_Check*100,"%", "and
 
 ## a. Fit Models to the data for (1) logistic regression, (2) k-nearest neighbors with *k* = 3, and (3) Classification trees.
 
-## Use Personal Loan as the outcome variable. Report the validation confusion matrix for each of the three models. 
+> Use Personal Loan as the outcome variable. Report the validation confusion matrix for each of the three models. 
 
 ### <span style="color: #1c6155;">Logistic Regression</span> 
 
