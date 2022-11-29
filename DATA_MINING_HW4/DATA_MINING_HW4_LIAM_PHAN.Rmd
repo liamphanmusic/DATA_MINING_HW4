@@ -439,21 +439,19 @@ UB_Validation_Preprocess <- predict(norm_values, UB_Validation)
 # Set Seed 
 set.seed(1)
 
-# KNN Model using class package
+# Packages
 library(class)
+library(caret)
 
 # Choosing our K value
 k <- 3
 
 # KNN
-Predictions_KNN_Training <- knn(train=UB_Training_Preprocess[,-c("Personal Loan")], test = UB_Validation_Preprocess[,-c("Personal Loan")], cl = UB_Training_Preprocess$`Personal Loan`, k=k, prob = TRUE)
+NEW_KNN3 <- knn3(y = UB_Training_Preprocess$`Personal Loan`, x=UB_Training_Preprocess[,-c("Personal Loan")], k=k)
 
 # KNN Probabilities output
-Predictions_KNN_Training_Proba <- attributes(Predictions_KNN_Training)$prob
-Predictions_KNN_Training_Proba <- as.data.frame(Predictions_KNN_Training_Proba)
-
-# Change 1 to 0 since 1 is for Dummy == No Loan not Loan
-Predictions_KNN_Training_Proba[Predictions_KNN_Training_Proba == 1] <- 0
+Predictions_KNN_Training <- predict(NEW_KNN3, UB_Validation_Preprocess[,-c("Personal Loan")], type = "class")
+Predictions_KNN_Training_Proba <- predict(NEW_KNN3, UB_Validation_Preprocess[,-c("Personal Loan")], type = "prob")[,2]
 
 # Confusion Matrix
 Confusion_Matrix_KNN <- confusionMatrix(data = Predictions_KNN_Training, reference = UB_Validation$`Personal Loan`)
@@ -781,7 +779,7 @@ All_Models_Predictions$Average <- NA
 
 # Average Vote
 for(i in 1:nrow(All_Models_Predictions)){
-  All_Models_Predictions$Average[i] =  (CT_Predictions_Proba[i,2] + logit.reg.pred[i] + Predictions_KNN_Training_Proba[i,1])/3
+  All_Models_Predictions$Average[i] =  (CT_Predictions_Proba[i,2] + logit.reg.pred[i] + Predictions_KNN_Training_Proba[i])/3
 }
 
 # Round Average Vote to 4th Decimals
@@ -1696,3 +1694,5 @@ DT::datatable(cluster_2_4, caption = "Cluster 4 - Considered Healthy" )
 [Determining The Optimal Number Of Clusters: 3 Must Know Methods](http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determiningthe-optimal-number-of-clusters-3-must-know-methods/)
 
 [10 Tips On How To Find The Healthiest Cereals - pickyeaterblog.com](https://pickyeaterblog.com/the-picky-eaters-10-healthiest-breakfast-cereals/)
+
+[Plotting Confusion Matrix in R - Stackoverflow](https://stackoverflow.com/questions/23891140/r-how-to-visualize-confusion-matrix-using-the-caret-package) 
