@@ -1735,7 +1735,7 @@ DT::datatable(cluster_2_4, caption = "Cluster 4 - Considered Healthy" )
 
 [Summarytools in R Markdown Documents](https://cran.r-project.org/web/packages/summarytools/vignettes/rmarkdown.html)
 
-[R FUNCTION : GAIN AND LIFT TABLE](https://www.listendata.com/2015/06/r-function-gain-and-lift-table.html)
+[R Function: Gain and Lift Table](https://www.listendata.com/2015/06/r-function-gain-and-lift-table.html)
 
 [How does ties.method argument in R's Rank Function Work?](https://stats.stackexchange.com/questions/34008/how-does-ties-method-argument-of-rs-rank-function-work)
 
