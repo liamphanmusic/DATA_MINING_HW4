@@ -291,9 +291,9 @@ summary(logit.reg)
 
 ```
 
+> Comments: We can see that **Mortgage**, **Securities Account**, **Age** and **Experience** are not statistically significant in this logistic regression. **Income**, **EducationGraduate** and **EducationAdvanced/Professional** with **CD Account** seems to be really significant in this model with a very low p-value. **EducationAdvanced/Professional**, **EducationGraduate** and **CD Account** seems to have the most positive impact in wether or not a individual may contract a Loan or not.
 
 #### Predictions and Confusion Matrix
-
 
 <center>
 
@@ -374,7 +374,7 @@ draw_confusion_matrix_LR(Confusion_Matrix_LR)
 
 </center>
 
-> Comments:
+> Comments: The Confusion Matrix shows us an Accuracy of 0.949 with the Logistic Regression Model, but we have a very bad specificity, meaning that the model fails to give us good prediction for the True Negative, which are here Loan, thus our main goal in the predictive model. 
 
 
 ### <span style="color: #1c6155;">K-nearest neighbors with *k* = 3</span> 
@@ -512,7 +512,7 @@ draw_confusion_matrix_KNN(Confusion_Matrix_KNN)
 
 </center>
 
-> Comments:
+> Comments: KNN Confusion Matrix shows us a slightly better accuracy than Regression Model, with Accuracy of 0.969 and a better Specificity of 0.683.
 
 
 ### <span style="color: #1c6155;">Classification Trees</span>
@@ -537,6 +537,8 @@ CT_Plot <- rpart.plot(CT, type=0, varlen = 0, box.col=ifelse(CT$frame$var == "<l
 ```
 
 </center>
+
+> Comments: We can see that Classification Trees give us very different predictor variables. **Income**, **CCAvg** and **Education.1** give the main split in the Trees, then **CD Account**, **Family** and **Income** again split further more to the main terminal nodes until **CCAvg** fo the 4th split. 
 
 #### Predictions and Confusion Matrix
 
@@ -609,7 +611,7 @@ draw_confusion_matrix_CT(Confusion_Matrix_CT)
 
 </center>
 
-> Comments:
+> Comments: Classification Trees Confusion Matrix give us a way better look at the overall improvement in Specificity and Accuracy. Specifity is now 0.836 way better than previously and Accuracy raise up to 0.982, thus very close to an alpha error of 0.01.
 
 
 ### <span style="color: #1c6155;">Most Accurate Model</span>
@@ -631,7 +633,7 @@ data.table(Accuracy_DF)
 
 ```
 
-> Comments: The most accurate model is the Classification Trees, having at least 98% accurate predictions (Training against Validation), the lowest accuracy model is the Logistic Regression with 95% Accuracy. 
+> Comments: The most accurate model is the Classification Trees, having at least 98.1% accurate predictions (Training against Validation), the lowest accuracy model is the Logistic Regression with 94.8% Accuracy. 
 
 
 ## b. Create Dataframe with the actual outcome, predicted outcome, and each of the tree models
@@ -769,7 +771,7 @@ draw_confusion_matrix_Majority(Confusion_Matrix_Majority)
 
 </center>
 
-> Comments: The Majority Vote has an accuracy of 97.2%, which is slighty better than RT and KNN but less accurate than CT. 
+> Comments: The Majority Vote has an accuracy of 97.2%, which is slighty better than RT and KNN but less accurate than CT. The Specificity decreased here compared to CT, since we have 0.71.
 
 ### <span style="color: #1c6155;">Average of Predicted Probabilities</span> 
 
@@ -870,7 +872,7 @@ draw_confusion_matrix_Average(Confusion_Matrix_Average)
 
 </center>
 
-> Comments: 
+> Comments: Averaging Probabilities of predictions give us a very slightly, or even the same result than a Majority Vote Method, the Specificity is slightly better.
 
 ## d. Compare Error Rates for the 3 individuals methods and the 2 ensemble methods. 
 
@@ -897,7 +899,7 @@ DT::datatable(Error_Rates_DF, caption = "Error Rates from 3 Individual Methods a
 
 ```
 
-> Comments: 
+> Comments: CT is the one with the smallest error rate followed by Average Method and Majority Method.
 
 # <span style="color: #1c6155;">Ex 13.2</span> 
 
