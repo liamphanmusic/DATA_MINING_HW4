@@ -94,6 +94,12 @@ DT::datatable(head(Cereals,2))
 
 ```
 
+<center>
+
+![TABLE 4.8 - Breakfast Cereals Dataset](TABLE1.png)
+
+</center>
+
 
 ```{r summary of dataset Cereals,results="asis"}
 
@@ -1509,9 +1515,35 @@ DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 
 ## b. Which method leads to the most insightful or meaningful clusters ?
 
-> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Also Cross-Validity can lead to choose a different method if one can generate better cluster in other dataset and thus not overfit the training data to much. 
+> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Also Cross-Validity can lead to choose a different method if one can generate better cluster in other dataset and thus not overfit the training data to much. Let's plot their profiles.
 
+### Profile of Clusters in Singe Linkage
 
+```{r centroid profiling 1}
+
+# Required Github Package
+library(qacr)
+
+# Computing Centroid Profiles for Single Linkage Method
+(profile_plot(cluster_center1, cluster = "cluster", type = c("bar")))
+
+```
+
+> Comments: We can see that Cluster 1 and Cluster 4 are very distinct to each other while Cluster 2 and 5 Tend to variate in the variables. Cluster 3 tend to overfit 1 particular variable which is shelf as well as cluster 2. 
+
+### Profile of Clusters in Complete Linkage
+
+```{r centroid profiling 2}
+
+# Required Github Package
+library(qacr)
+
+# Computing Centroid Profiles for Single Linkage Method
+(profile_plot(cluster_center2, cluster = "cluster", type = c("bar")))
+
+```
+
+> Comments: The Complete Method in Clustering give us the fairly same clusters such as Cluster 1, but one main differences is how much 1 variable is going to be overfitted in 1 cluster. We can see that Cluster 3 and 4 are less dominated by 1 variable and all clusters are way smoother in the clustering in terms of scale. This kind of profile show us that complete method would give us more interesting clusters with more variables in each, but still giving good insight in separating them. 
 
 ## c. Choose one of the methods. How many clusters would you use? What distance is used for this cutoff?
 
@@ -1698,3 +1730,5 @@ DT::datatable(cluster_2_4, caption = "Cluster 4 - Considered Healthy" )
 [10 Tips On How To Find The Healthiest Cereals - pickyeaterblog.com](https://pickyeaterblog.com/the-picky-eaters-10-healthiest-breakfast-cereals/)
 
 [Plotting Confusion Matrix in R - Stackoverflow](https://stackoverflow.com/questions/23891140/r-how-to-visualize-confusion-matrix-using-the-caret-package) 
+
+[Cluster profile plots - Gihtub](https://rkabacoff.github.io/qacr/reference/profile_plot.html)
