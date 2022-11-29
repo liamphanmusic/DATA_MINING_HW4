@@ -160,6 +160,9 @@ dfSummary(eBay,
 
 ```
 
+> We can see that **sellerRating** tend to have a lot of right outliers. **Duration** tend to be left skewed with **endDay** as well (having more **endDay** on Monday for example.)
+
+
 ## Missing Variables Plot 
 
 <center>
@@ -197,6 +200,8 @@ dfSummary(UniversalBank,
           tmp.img.dir  = "/tmp")
 
 ```
+
+> We can see that **Experience** has some negative values in its range, thus questionning the way we should interpret Experience depending on the reference point. In our case lacking information from this dataset leave us keeping those variables as such. In a very different scenario, knowing that the survey could offer negative experience values would oblige us to dig in further the data collection and survey processes and question how accurate are the values in our dataset and how we collected them. We can see that a lot of variables are very right skewed (**CCAvg**, **Income** or **Mortgage**). 
 
 ## Missing Variables Plot 
 
