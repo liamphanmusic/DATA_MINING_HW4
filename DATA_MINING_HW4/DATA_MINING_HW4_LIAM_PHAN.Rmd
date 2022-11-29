@@ -1408,10 +1408,9 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 ### Compare the bagged tree to the random forest in terms of validation accuracy and lift on first decile. How are the two methods conceptually different? 
 
-> We can see that the bagged tree and the random forest are quite similar in accuracy: 0.853 VS 0.877. We can see that the first decile on both are the same.  
+> We can see that the bagged tree and the random forest are quite similar in accuracy: 0.853 VS 0.877. We can see that the first decile on both are the same. The big difference in Random Forest is that it only subset of features that are selected at random are used for the best split in each node in a tree, oppposite to bagging where all features are considered for splitting a node.   
 
 # <span style="color: #1c6155;">Ex 15.3</span> 
-
 ## **Customer Rating of Breakfast Cereals**
 
 ```{r clean environment 4, include=FALSE}
@@ -1512,7 +1511,7 @@ DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 
 ## b. Which method leads to the most insightful or meaningful clusters ?
 
-> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. 
+> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Also Cross-Validity can lead to choose a different method if one can generate better cluster in other dataset and thus not overfit the training data to much. 
 
 ## c. Choose one of the methods. How many clusters would you use? What distance is used for this cutoff?
 
