@@ -113,6 +113,8 @@ dfSummary(Cereals,
 
 ```
 
+> We can see that **Potass** tend to be right skewed with **Fiber** as well. **Rating** as some outliers in the far right and weight seems to be very centralized as well as **Calories**, having far outliers at both sides.  
+
 ## Missing Variables Plot 
 
 <center>
