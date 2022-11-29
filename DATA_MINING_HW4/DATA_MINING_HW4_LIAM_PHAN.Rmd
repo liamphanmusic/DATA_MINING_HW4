@@ -203,7 +203,7 @@ dfSummary(UniversalBank,
 
 ```
 
-> We can see that **Experience** has some negative values in its range, thus questionning the way we should interpret Experience depending on the reference point. In our case lacking information from this dataset leave us keeping those variables as such. In a very different scenario, knowing that the survey could offer negative experience values would oblige us to dig in further the data collection and survey processes and question how accurate are the values in our dataset and how we collected them. We can see that a lot of variables are very right skewed (**CCAvg**, **Income** or **Mortgage**). 
+> We can see that **Experience** has some negative values in its range, thus questionning the way we should interpret **Experience** depending on the reference point. In our case lacking information from this dataset leave us keeping those variables as such. In a very different scenario, knowing that the survey could offer negative experience values would oblige us to dig in further the data collection and survey processes and question how accurate are the values in our dataset and how we collected them. We can see that a lot of variables are very right skewed (**CCAvg**, **Income** or **Mortgage**). 
 
 ## Missing Variables Plot 
 
@@ -1092,7 +1092,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 </center>
 
-> Comments:
+> Comments: Our first decile is having a mean-response of 1.774. We can see that our first decile show us that our model is doing almost twice as better as a base random model. Then it quikly fall off from the 5th deciles and so on. 
 
 ## b. Run a boosted tree with the same predictors
 
@@ -1206,7 +1206,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 </center>
 
-> Comments: 
+> Comments: Our first decile is having a mean-response of 1.897. We can see that our first decile show us that our model is doing almost twice as better as a base random model. Then it quikly fall off from the 6th deciles and so on.
 
 ## c. Run a bagged tree with the same predictors
 
@@ -1312,7 +1312,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 </center>
 
-> Comments:
+> Comments: Our first decile is having a mean-response of 1.897. This Model is very, almost likely to give the same lift as the previous model.
 
 ## d. Run a random forest with argument mtry = 4
 
@@ -1415,7 +1415,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 </center>
 
-> Comments: 
+> Comments: Our first decile is having a mean-response of 1.897. This Model is very similar and give the same lift as the previous model.
 
 ### Compare the bagged tree to the random forest in terms of validation accuracy and lift on first decile. How are the two methods conceptually different? 
 
