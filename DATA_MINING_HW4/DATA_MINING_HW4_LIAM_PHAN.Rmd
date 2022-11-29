@@ -1307,7 +1307,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 <center>
 
-```{r random forest}
+```{r random forest 1}
 
 # Set seed
 set.seed(1)
@@ -1326,12 +1326,12 @@ Prediction_RF_Prob <- predict(Random_Forest, EB_Validation, type="prob")
 Confusion_Matrix_RF <- confusionMatrix(data = Prediction_RF, reference = EB_Validation$`Competitive?`)
 
 # Create the Function for Confusion Matrix
-draw_confusion_matrix_RF <- function(cm2) {
+draw_confusion_matrix_RF <- function(cm) {
 
   layout(matrix(c(1,1,2)))
   par(mar=c(2,2,2,2))
   plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
-  title('CONFUSION MATRIX for Random Forest', cex.main=2)
+  title('CONFUSION MATRIX for Random Forests', cex.main=2)
 
   # create the matrix 
   rect(150, 430, 240, 370, col='#1c6155')
