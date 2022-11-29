@@ -1519,6 +1519,8 @@ DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 
 ### Profile of Clusters in Singe Linkage
 
+<center>
+
 ```{r centroid profiling 1}
 
 # Required Github Package
@@ -1529,9 +1531,13 @@ library(qacr)
 
 ```
 
+</center>
+
 > Comments: We can see that Cluster 1 and Cluster 4 are very distinct to each other while Cluster 2 and 5 Tend to variate in the variables. Cluster 3 tend to overfit 1 particular variable which is shelf as well as cluster 2. 
 
 ### Profile of Clusters in Complete Linkage
+
+<center>
 
 ```{r centroid profiling 2}
 
@@ -1542,6 +1548,9 @@ library(qacr)
 (profile_plot(cluster_center2, cluster = "cluster", type = c("bar")))
 
 ```
+
+
+</center>
 
 > Comments: The Complete Method in Clustering give us the fairly same clusters such as Cluster 1, but one main differences is how much 1 variable is going to be overfitted in 1 cluster. We can see that Cluster 3 and 4 are less dominated by 1 variable and all clusters are way smoother in the clustering in terms of scale. This kind of profile show us that complete method would give us more interesting clusters with more variables in each, but still giving good insight in separating them. 
 
