@@ -870,7 +870,7 @@ draw_confusion_matrix_Average(Confusion_Matrix_Average)
 
 </center>
 
-> Comments: Averaging Probabilities of predictions give us a very slightly, or even the same result than a Majority Vote Method, the Specificity is slightly better.
+> Comments: Averaging Probabilities of predictions give us a very slightly, by 0.4% improvement with the Specificity that is slightly better with 4.4% improvement.
 
 ## d. Compare Error Rates for the 3 individuals methods and the 2 ensemble methods. 
 
@@ -1482,7 +1482,7 @@ rect.hclust(hc2, k = k1, border = 2:5)
 
 </center>
 
-> Comments: Single Linkage tend to overfit some cereals to the red cluster while Complete linkage give a bit more say to the classification to other clusters. 
+> Comments: Single Linkage tend to overfit some cereals to the red right cluster while Complete linkage give a bit more say to the classification to other clusters, such as in the far left and far right red clusters.. 
 
 ### Centroid for Single Linkage with 5 Clusters
 
@@ -1510,6 +1510,8 @@ DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 ## b. Which method leads to the most insightful or meaningful clusters ?
 
 > We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Also Cross-Validity can lead to choose a different method if one can generate better cluster in other dataset and thus not overfit the training data to much. 
+
+
 
 ## c. Choose one of the methods. How many clusters would you use? What distance is used for this cutoff?
 
