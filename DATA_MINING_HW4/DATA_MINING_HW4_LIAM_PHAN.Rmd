@@ -58,7 +58,7 @@ library(adabag) # Boosting and Bagging
 library(FactoMineR) # Clustering
 library(factoextra) # Clustering
 library(NbClust) # Optimal Clustering
-library(qacr) # Clusters Profiling
+library(qacr) # Clusters Profiling | install with: remotes::install_github("rkabacoff/qacr")
 library(dendextend) # Cluster Dendrogram
 
 ```
@@ -1080,13 +1080,13 @@ set.seed(1)
 library(gains)
 
 # Compute Gains Chart
-gain <- gains(EB_Validation_Pure$`Competitive?`, CT_Predictions_Prob[,2], groups = 10, ties.method=c("first"))
-barplot(gain$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain$depth, xlab = "Percentile",
+gain <- gains(as.numeric(as.character(EB_Validation_Pure$`Competitive?`)), CT_Predictions_Prob[,2], groups = 10, ties.method=c("first"))
+barplot(gain$mean.resp / mean(as.numeric(as.character(EB_Validation_Pure$`Competitive?`))), names.arg = gain$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 # Top Decile
 library(lift)
-print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(CT_Predictions_Prob[,2], EB_Validation_Pure$`Competitive?`)))
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(CT_Predictions_Prob[,2], as.numeric(as.character(EB_Validation_Pure$`Competitive?`)))))
 
 ```
 
@@ -1193,13 +1193,13 @@ set.seed(1)
 library(gains)
 
 # Compute Gains Chart
-gain_1 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Boost$prob[,2], groups = 10, ties.method=c("first"))
-barplot(gain_1$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_1$depth, xlab = "Percentile",
+gain_1 <- gains(as.numeric(as.character(EB_Validation_Pure$`Competitive?`)), Prediction_Boost$prob[,2], groups = 10, ties.method=c("first"))
+barplot(gain_1$mean.resp / mean(as.numeric(as.character(EB_Validation_Pure$`Competitive?`))), names.arg = gain_1$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 # Top Decile
 library(lift)
-print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Boost$prob[,2], EB_Validation_Pure$`Competitive?`)))
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Boost$prob[,2], as.numeric(as.character(EB_Validation_Pure$`Competitive?`)))))
 
 
 ```
@@ -1300,13 +1300,13 @@ set.seed(1)
 library(gains)
 
 # Compute Gains Chart
-gain_2 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_Bagging$prob[,2],groups = 10, ties.method=c("first"))
-barplot(gain_2$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_2$depth, xlab = "Percentile",
+gain_2 <- gains(as.numeric(as.character(EB_Validation_Pure$`Competitive?`)), Prediction_Bagging$prob[,2],groups = 10, ties.method=c("first"))
+barplot(gain_2$mean.resp / mean(as.numeric(as.character(EB_Validation_Pure$`Competitive?`))), names.arg = gain_2$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 # Top Decile
 library(lift)
-print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Bagging$prob[,2], EB_Validation_Pure$`Competitive?`)))
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Bagging$prob[,2], as.numeric(as.character(EB_Validation_Pure$`Competitive?`)))))
 
 ```
 
@@ -1398,18 +1398,20 @@ draw_confusion_matrix_RF(Confusion_Matrix_RF)
 
 ```{r Lift Chart RF}
 
+# Set seed
+set.seed(1)
+
 # Load Gains
 library(gains)
 
 # Compute Gains Chart
-gain_3 <- gains(EB_Validation_Pure$`Competitive?`, Prediction_RF_Prob[,2],groups = 10, ties.method=c("first"))
-
-barplot(gain_3$mean.resp / mean(EB_Validation_Pure$`Competitive?`), names.arg = gain_3$depth, xlab = "Percentile",
+gain_3 <- gains(as.numeric(as.character(EB_Validation_Pure$`Competitive?`)), Prediction_RF_Prob[,2], groups = 10, ties.method=c("first"))
+barplot(gain_3$mean.resp / mean(as.numeric(as.character(EB_Validation_Pure$`Competitive?`))), names.arg = gain_3$depth, xlab = "Percentile",
 ylab = "Mean Response", main = "Decile-wise lift chart", col = "#1c6155")
 
 # Top Decile
 library(lift)
-print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_RF_Prob[,2], EB_Validation_Pure$`Competitive?`)))
+print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_RF_Prob[,2], as.numeric(as.character(EB_Validation_Pure$`Competitive?`)))))
 
 ```
 
