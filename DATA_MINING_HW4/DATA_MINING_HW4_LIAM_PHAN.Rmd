@@ -393,7 +393,7 @@ draw_confusion_matrix_LR(Confusion_Matrix_LR)
 
 ### <span style="color: #1c6155;">K-nearest neighbors with *k* = 3</span> 
 
-#### Data Preprocessing 
+#### <span style="color: #1c6155;">Data Preprocessing</span>
 
 ```{r Preprocess for KNN}
 
@@ -822,26 +822,6 @@ DT::datatable(All_Models_Predictions, caption = "Predicted VS Actual Loan in Val
 
 
 #### <span style="color: #1c6155;">Confusion Matrix with the Average Predicted Probabilities</span>
-
-[Github Repo for this Homework 4](https://github.com/LiamPhan17/DATA_MINING_HW4)
-
-[Data Mining for Business Analytics: Concepts, Techniques, and Applications in R](https://www.wiley.com/en-us/Data+Mining+for+Business+Analytics:+Concepts,+Techniques,+and+Applications+in+R-p-9781118879368)
-
-[Summarytools in R Markdown Documents](https://cran.r-project.org/web/packages/summarytools/vignettes/rmarkdown.html)
-
-[R Function: Gain and Lift Table](https://www.listendata.com/2015/06/r-function-gain-and-lift-table.html)
-
-[How does ties.method argument in R's Rank Function Work?](https://stats.stackexchange.com/questions/34008/how-does-ties-method-argument-of-rs-rank-function-work)
-
-[For hierarchical clustering, how to find the “center” in each cluster in R](https://stackoverflow.com/questions/60643219/for-hierarchical-clustering-how-to-find-the-center-in-each-cluster-in-r)
-
-[Determining The Optimal Number Of Clusters: 3 Must Know Methods](http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determiningthe-optimal-number-of-clusters-3-must-know-methods/)
-
-[10 Tips On How To Find The Healthiest Cereals - pickyeaterblog.com](https://pickyeaterblog.com/the-picky-eaters-10-healthiest-breakfast-cereals/)
-
-[Plotting Confusion Matrix in R - Stackoverflow](https://stackoverflow.com/questions/23891140/r-how-to-visualize-confusion-matrix-using-the-caret-package) 
-
-[Cluster profile plots - Gihtub](https://rkabacoff.github.io/qacr/reference/profile_plot.html)
 
 
 <center>
