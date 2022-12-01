@@ -86,7 +86,7 @@ UniversalBank <- fread("data/UniversalBank.csv")
 
 ## Cereals.csv
 
-## Quick Preview 
+### <span style="color: #1c6155;">Quick Preview</span>
 
 ```{r preview of dataset Cereals}
 
@@ -115,7 +115,7 @@ dfSummary(Cereals,
 
 > We can see that **Potass** tend to be right skewed with **Fiber** as well. **Rating** as some outliers in the far right and weight seems to be very centralized as well as **Calories**, having far outliers at both sides.  
 
-## Missing Variables Plot 
+### <span style="color: #1c6155;">Missing Variables Plot</span>
 
 <center>
 
@@ -141,7 +141,7 @@ mean(is.na(Cereals))
 
 ## eBayAuction.csv
 
-## Quick Preview 
+### <span style="color: #1c6155;">Quick Preview</span>
 
 ```{r preview of dataset eBay}
 
@@ -162,11 +162,12 @@ dfSummary(eBay,
 
 ```
 
+
 > We can see that **sellerRating** tend to have a lot of right outliers. **Duration** tend to be left skewed with **endDay** as well (having more **endDay** on Monday for example.)
 
 
-## Missing Variables Plot 
-
+### <span style="color: #1c6155;">Missing Variables Plot</span>
+ 
 <center>
 
 ```{r missing variable plot eBay}
@@ -182,7 +183,7 @@ gg_miss_var(eBay, show_pct = TRUE)
 
 ## UniversalBank.csv
 
-## Quick Preview 
+## <span style="color: #1c6155;">Quick Preview</span>
 
 ```{r preview of dataset UniversalBank}
 
@@ -205,7 +206,7 @@ dfSummary(UniversalBank,
 
 > We can see that **Experience** has some negative values in its range, thus questionning the way we should interpret **Experience** depending on the reference point. In our case lacking information from this dataset leave us keeping those variables as such. In a very different scenario, knowing that the survey could offer negative experience values would oblige us to dig in further the data collection and survey processes and question how accurate are the values in our dataset and how we collected them. We can see that a lot of variables are very right skewed (**CCAvg**, **Income** or **Mortgage**). 
 
-## Missing Variables Plot 
+### <span style="color: #1c6155;">Missing Variables Plot</span>
 
 <center>
 
@@ -1616,6 +1617,8 @@ Cereals_Preprocess_Randomly <- Cereals_Preprocess[-sample(1:nrow(Cereals_Preproc
 
 ```
 
+<center>
+
 ```{r hierarchical clustering 2, warning=FALSE}
 
 # Setting Seed
@@ -1647,10 +1650,13 @@ rect.hclust(stability_hc2, k = k1, border = 2:5)
 
 ```
 
+</center>
+
 
 > Comments: We can see that for single linkage method, the clusters structure don't change a lot, but for complete linkage, there is some changes in the clustering. Single linkage seem more stable than complete linkage in this case, we also could test below 20% and we would get closer to our original data clustering. In general, since the big proportion of random removal, we can see that our clusters are quite stable using both method.  
 
 ### <span style="color: #1c6155;">Centroid for Single Linkage and Complete Linkage with 5 Clusters</span>
+
 
 ```{r centroid for single linkage 1}
 
