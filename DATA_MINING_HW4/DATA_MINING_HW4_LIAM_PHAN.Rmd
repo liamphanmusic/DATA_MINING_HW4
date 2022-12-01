@@ -1424,7 +1424,6 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 > We can see that the bagged tree and the random forest are quite similar in accuracy: 0.853 VS 0.877. We can see that the first decile on both are the same. The big difference in Random Forest is that it only subset of features that are selected at random are used for the best split in each node in a tree, oppposite to bagging where all features are considered for splitting a node.   
 
 # <span style="color: #1c6155;">Ex 15.3</span> 
-## **Customer Rating of Breakfast Cereals**
 
 ```{r clean environment 4, include=FALSE}
 
@@ -1432,6 +1431,8 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 rm(list = ls()) 
 
 ```
+
+## **Customer Rating of Breakfast Cereals**
 
 ## Data Preprocessing
 
@@ -1524,7 +1525,7 @@ DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 
 ## b. Which method leads to the most insightful or meaningful clusters ?
 
-> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Also Cross-Validity can lead to choose a different method if one can generate better cluster in other dataset and thus not overfit the training data to much. Let's plot their profiles.
+> We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Let's plot their profiles. 
 
 ### Profile of Clusters in Singe Linkage
 
@@ -1563,13 +1564,87 @@ library(qacr)
 
 > Comments: The Complete Method in Clustering give us the fairly same clusters such as Cluster 1, but one main differences is how much 1 variable is going to be overfitted in 1 cluster. We can see that Cluster 3 and 4 are less dominated by 1 variable and all clusters are way smoother in the clustering in terms of scale. This kind of profile show us that complete method would give us more interesting clusters with more variables in each, but still giving good insight in separating them. 
 
+## Stability 
+
+> To Check if clusters are stable in both method (single or complete linkage) of our hierarchical clusering model, we can remove at random some observations of our dataset and check how the clusers behave in such modification. Here we could check up to 20% random removals to see how it behave. 
+
+```{r Stability of Clusters}
+
+# Set seed
+set.seed(1)
+
+# Percentage of Removal
+pourcentage_remove <- 0.2
+
+# Randomly remove some observations to our Cereals Dataset
+Cereals_Preprocess_Randomly <- Cereals_Preprocess[-sample(1:nrow(Cereals_Preprocess), round(pourcentage_remove*nrow(Cereals_Preprocess))), ]
+
+
+```
+
+```{r hierarchical clustering 2, warning=FALSE}
+
+# Setting Seed
+set.seed(1)
+
+# Library
+library(cluster)
+library(dendextend)
+
+# Computing Distance - Euclidean
+Distance_Euclidian_1 <- dist(Cereals_Preprocess_Randomly, method = "euclidean")
+
+# Computing Hierarchical Cluster - Single Linkage --------------
+stability_hc1 <- hclust(Distance_Euclidian_1, method = "single")
+
+## Plotting
+plot(stability_hc1, hang = -1, ann = TRUE, labels=Cereals_Preprocess_Randomly$name, cex=0.5, main="Cluster Dendrogram for Single Method", sub="with 5 Clusters, removing 20% of original data")
+
+# Choosing K
+k1 <- 5
+rect.hclust(stability_hc1, k = k1, border = 2:5)
+
+# Computing Hierarchical Cluster - Complete Linkage --------------
+stability_hc2 <- hclust(Distance_Euclidian_1, method = "complete")
+
+## Plotting
+plot(stability_hc2, hang = -1, ann = TRUE, labels=Cereals_Preprocess_Randomly$name, cex=0.5, main="Cluster Dendrogram for Complete Method",sub="with 5 Clusters, removing 20% of original data")
+rect.hclust(stability_hc2, k = k1, border = 2:5)
+
+```
+
+> Comments: We can see that for single linkage method, the clusters structure don't change a lot, but for complete linkage, there is some changes in the clustering. Single linkage seem more stable than complete linkage in this case, we also could test below 20% and we would get closer to our original data clustering. In general, since the big proportion of random removal, we can see that our clusters are quite stable using both method.  
+
+### Centroid for Single Linkage and Complete Linkage with 5 Clusters 
+
+```{r centroid for single linkage 1}
+
+## Centroid Computation 
+clusters1_stability <- cutree(stability_hc1, k=k1)
+cluster_center1_stability = aggregate(Cereals_Preprocess_Randomly[,4:16],list(cluster=clusters1_stability),mean)
+
+
+```
+
+
+```{r centroid for complete linkage 2}
+
+## Centroid Computation 
+clusters2_stability <- cutree(stability_hc2, k=k1)
+cluster_center2_stability = aggregate(Cereals_Preprocess_Randomly[,4:16],list(cluster=clusters2_stability),mean)
+
+```
+
+
 ## c. Choose one of the methods. How many clusters would you use? What distance is used for this cutoff?
+
+> We will use the complete linkage method, giving more insights based on the profiling of the clusters.
 
 ### Finding Optimal Clusters Number using Height
 
 <center>
 
-```{r choose 1 method }
+```{r choose 1 method}
 
 # Set seed
 set.seed(1)
