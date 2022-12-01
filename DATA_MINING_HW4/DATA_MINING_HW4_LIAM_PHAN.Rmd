@@ -910,7 +910,7 @@ DT::datatable(Error_Rates_DF, caption = "Error Rates from 3 Individual Methods a
 
 ```
 
-> Comments: CT is the one with the smallest error rate followed by Average Method and Majority Method.
+> Comments: CT is the one with the smallest error rate followed by Average Method and Majority Method. Since we are looking at having the best accuracy in the true negative, which are loan=1. So we would look at our Specificity and thus would choose Classification Trees since it have the highest rate. 
 
 # <span style="color: #1c6155;">Ex 13.2</span> 
 
@@ -957,6 +957,7 @@ print(paste("Proportion in Training is", round(Training_Proportion_Check*100),"%
 
 ```
 
+
 ## a. Run a Classification Tree, using default controls of rpart()
 
 ### Actual VS Predictions
@@ -996,6 +997,7 @@ colnames(Predictions_Actual_CT)[1] <- "Actual"
 DT::datatable(Predictions_Actual_CT, caption = "Actual VS Predicted with Default Classification Trees") 
 
 ```
+
 <center>
 
 ### Confusion Matrix
@@ -1062,6 +1064,7 @@ draw_confusion_matrix_CT_2(Confusion_Matrix_CT_2)
 
 ```
 
+
 </center>
 
 > Comments: The Overall Accuracy is 0.81 for this Default Classification Trees with a specificity of 0.716 and sensitivity of 0.915. The Model is better at True Positive than True Negative. 
@@ -1089,6 +1092,7 @@ library(lift)
 print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(CT_Predictions_Prob[,2], as.numeric(as.character(EB_Validation_Pure$`Competitive?`)))))
 
 ```
+
 
 </center>
 
@@ -1176,7 +1180,9 @@ draw_confusion_matrix_BOOST(Confusion_Matrix_BOOST)
 
 ```
 
+
 </center>
+
 
 > Comments: The Overall Accuracy is 0.886 with a balanced Sensitivity and Specificity, both less than 0.9. The Specificity is better with Boosted Tree than Default Classification Trees. 
 
@@ -1283,6 +1289,7 @@ draw_confusion_matrix_BT(Confusion_Matrix_BT)
 
 ```
 
+
 </center>
 
 > Comments: The Overall Accuracy is 0.853 for this Bagged Tree. The Sensitivity is larger than the Specificity such as in the Default Classification Trees and our Specificity is lower than the boosted Trees model. 
@@ -1309,6 +1316,7 @@ library(lift)
 print(paste("Top decile lift by ordering the data by the predictions, and computing the proportion of positives in the top 10%.","Here the top decile is",TopDecileLift(Prediction_Bagging$prob[,2], as.numeric(as.character(EB_Validation_Pure$`Competitive?`)))))
 
 ```
+
 
 </center>
 
