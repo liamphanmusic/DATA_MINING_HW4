@@ -306,7 +306,7 @@ summary(logit.reg)
 
 > Comments: We can see that **Mortgage**, **Securities Account**, **Age** and **Experience** are not statistically significant in this logistic regression. **Income**, **EducationGraduate** and **EducationAdvanced/Professional** with **CD Account** seems to be really significant in this model with a very low p-value. **EducationAdvanced/Professional**, **EducationGraduate** and **CD Account** seems to have the most positive impact in wether or not a individual may contract a Loan or not. One possibility would be to use different method for variable selections in this logistic regression (that would certainly remove some unsignificant variables) or even rescale variable by log in case of some skewed distributions. In this case removing variables would certainly improve the model by adding more weight to the most important and statistically significant variables and thus the predictions. In our case, we only mention the possibility but we do not go through those steps, since we are trying to compare all variables predictors to each of the models without optimizing it and to have a fair comparison. 
 
-#### Predictions and Confusion Matrix
+#### <span style="color: #1c6155;">Predictions and Confusion Matrix</span>
 
 <center>
 
@@ -443,7 +443,7 @@ UB_Validation_Preprocess <- predict(norm_values, UB_Validation)
 ```
 
 
-#### Predictions and Confusion Matrix
+#### <span style="color: #1c6155;">Predictions and Confusion Matrix</span>
 
 <center>
 
@@ -551,7 +551,7 @@ CT_Plot <- rpart.plot(CT, type=0, varlen = 0, box.col=ifelse(CT$frame$var == "<l
 
 > Comments: We can see that Classification Trees give us very different predictor variables. **Income**, **CCAvg** and **Education.1** give the main split in the Trees, then **CD Account**, **Family** and **Income** again split further more to the main terminal nodes until **CCAvg** fo the 4th split. 
 
-#### Predictions and Confusion Matrix
+#### <span style="color: #1c6155;">Predictions and Confusion Matrix</span>
 
 <center>
 
@@ -719,7 +719,7 @@ DT::datatable(All_Models_Predictions, caption = "Predicted VS Actual Loan in Val
 
 ```
 
-#### Confusion Matrix with the Majority Vote
+#### <span style="color: #1c6155;">Confusion Matrix with the Majority Vote</span> 
 
 <center>
 
@@ -820,7 +820,28 @@ DT::datatable(All_Models_Predictions, caption = "Predicted VS Actual Loan in Val
 ```
 
 
-#### Confusion Matrix with the Average Predicted Probabilities
+#### <span style="color: #1c6155;">Confusion Matrix with the Average Predicted Probabilities</span>
+
+[Github Repo for this Homework 4](https://github.com/LiamPhan17/DATA_MINING_HW4)
+
+[Data Mining for Business Analytics: Concepts, Techniques, and Applications in R](https://www.wiley.com/en-us/Data+Mining+for+Business+Analytics:+Concepts,+Techniques,+and+Applications+in+R-p-9781118879368)
+
+[Summarytools in R Markdown Documents](https://cran.r-project.org/web/packages/summarytools/vignettes/rmarkdown.html)
+
+[R Function: Gain and Lift Table](https://www.listendata.com/2015/06/r-function-gain-and-lift-table.html)
+
+[How does ties.method argument in R's Rank Function Work?](https://stats.stackexchange.com/questions/34008/how-does-ties-method-argument-of-rs-rank-function-work)
+
+[For hierarchical clustering, how to find the “center” in each cluster in R](https://stackoverflow.com/questions/60643219/for-hierarchical-clustering-how-to-find-the-center-in-each-cluster-in-r)
+
+[Determining The Optimal Number Of Clusters: 3 Must Know Methods](http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determiningthe-optimal-number-of-clusters-3-must-know-methods/)
+
+[10 Tips On How To Find The Healthiest Cereals - pickyeaterblog.com](https://pickyeaterblog.com/the-picky-eaters-10-healthiest-breakfast-cereals/)
+
+[Plotting Confusion Matrix in R - Stackoverflow](https://stackoverflow.com/questions/23891140/r-how-to-visualize-confusion-matrix-using-the-caret-package) 
+
+[Cluster profile plots - Gihtub](https://rkabacoff.github.io/qacr/reference/profile_plot.html)
+
 
 <center>
 
@@ -960,7 +981,7 @@ print(paste("Proportion in Training is", round(Training_Proportion_Check*100),"%
 
 ## a. Run a Classification Tree, using default controls of rpart()
 
-### Actual VS Predictions
+### <span style="color: #1c6155;">Actual VS Predictions</span>
 
 ```{r CT and Validation Set Accuracy}
 
@@ -1000,7 +1021,7 @@ DT::datatable(Predictions_Actual_CT, caption = "Actual VS Predicted with Default
 
 <center>
 
-### Confusion Matrix
+### <span style="color: #1c6155;">Confusion Matrix</span>
 
 <center>
 
@@ -1065,12 +1086,13 @@ draw_confusion_matrix_CT_2(Confusion_Matrix_CT_2)
 ```
 
 
+
 </center>
 
 > Comments: The Overall Accuracy is 0.81 for this Default Classification Trees with a specificity of 0.716 and sensitivity of 0.915. The Model is better at True Positive than True Negative. 
 
 
-### Lift Chart
+### <span style="color: #1c6155;">Lift Chart</span>
 
 <center>
 
@@ -1186,7 +1208,7 @@ draw_confusion_matrix_BOOST(Confusion_Matrix_BOOST)
 
 > Comments: The Overall Accuracy is 0.886 with a balanced Sensitivity and Specificity, both less than 0.9. The Specificity is better with Boosted Tree than Default Classification Trees. 
 
-### Lift Chart
+### <span style="color: #1c6155;">Lift Chart</span>
 
 <center>
 
@@ -1209,6 +1231,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 
 ```
+
 
 </center>
 
@@ -1290,11 +1313,12 @@ draw_confusion_matrix_BT(Confusion_Matrix_BT)
 ```
 
 
+
 </center>
 
 > Comments: The Overall Accuracy is 0.853 for this Bagged Tree. The Sensitivity is larger than the Specificity such as in the Default Classification Trees and our Specificity is lower than the boosted Trees model. 
 
-### Lift Chart
+### <span style="color: #1c6155;">Lift Chart</span>
 
 <center>
 
@@ -1400,7 +1424,7 @@ draw_confusion_matrix_RF(Confusion_Matrix_RF)
 
 > Comments: The Overall Accuracy is 0.877 for this Random Forest, with a high Specificity but balanced as well with Sensitivity. The Specificity is also higher than previous model (apart from boosted trees). 
 
-### Lift Chart
+### <span style="color: #1c6155;">Lift Chart</span>
 
 <center>
 
@@ -1427,7 +1451,7 @@ print(paste("Top decile lift by ordering the data by the predictions, and comput
 
 > Comments: Our first decile is having a mean-response of 1.897. This Model is very similar and give the same lift as the previous model.
 
-### Compare the bagged tree to the random forest in terms of validation accuracy and lift on first decile. How are the two methods conceptually different? 
+## Compare the bagged tree to the random forest in terms of validation accuracy and lift on first decile. How are the two methods conceptually different? 
 
 > We can see that the bagged tree and the random forest are quite similar in accuracy: 0.853 VS 0.877. We can see that the first decile on both are the same. The big difference in Random Forest is that it only subset of features that are selected at random are used for the best split in each node in a tree, oppposite to bagging where all features are considered for splitting a node.   
 
@@ -1508,7 +1532,7 @@ rect.hclust(hc2, k = k1, border = 2:5)
 
 > Comments: Single Linkage tend to overfit some cereals to the red right cluster while Complete linkage give a bit more say to the classification to other clusters, such as in the far left and far right red clusters.. 
 
-### Centroid for Single Linkage with 5 Clusters
+### <span style="color: #1c6155;">Centroid for Single Linkage with 5 Clusters</span>
 
 ```{r centroid for single linkage}
 
@@ -1520,7 +1544,8 @@ DT::datatable(round(cluster_center1,2), caption = "Centroid Single Linkage")
 ```
 
 
-### Centroid for Complete Linkage with 5 Clusters
+
+### <span style="color: #1c6155;">Centroid for Complete Linkage with 5 Clusters</span>
 
 ```{r centroid for complete linkage}
 
@@ -1535,7 +1560,7 @@ DT::datatable(round(cluster_center2,2), caption = "Centroid Complete Linkage")
 
 > We can see that both method could lead to insightful and meaningful clusters depending on our main goals. Some Cluster may variate in their centroid due to the method applied and thus we may lose some insights by not choosing the criterion before-hand with some knowledge in the domain. We may want to take the method which separate furthest apart clusters and are more dense (internal validity) but also if we already now some domain knowledge in the field, we may recognizse some clusters that are already there in real life, thus using external validity can lead to choose a different method. Let's plot their profiles. 
 
-### Profile of Clusters in Singe Linkage
+### <span style="color: #1c6155;">Profile of Clusters in Singe Linkage</span>
 
 <center>
 
@@ -1553,7 +1578,7 @@ library(qacr)
 
 > Comments: We can see that Cluster 1 and Cluster 4 are very distinct to each other while Cluster 2 and 5 Tend to variate in the variables. Cluster 3 tend to overfit 1 particular variable which is shelf as well as cluster 2. 
 
-### Profile of Clusters in Complete Linkage
+### <span style="color: #1c6155;">Profile of Clusters in Complete Linkage</span>
 
 <center>
 
@@ -1566,6 +1591,7 @@ library(qacr)
 (profile_plot(cluster_center2, cluster = "cluster", type = c("bar")))
 
 ```
+
 
 
 </center>
@@ -1621,9 +1647,10 @@ rect.hclust(stability_hc2, k = k1, border = 2:5)
 
 ```
 
+
 > Comments: We can see that for single linkage method, the clusters structure don't change a lot, but for complete linkage, there is some changes in the clustering. Single linkage seem more stable than complete linkage in this case, we also could test below 20% and we would get closer to our original data clustering. In general, since the big proportion of random removal, we can see that our clusters are quite stable using both method.  
 
-### Centroid for Single Linkage and Complete Linkage with 5 Clusters 
+### <span style="color: #1c6155;">Centroid for Single Linkage and Complete Linkage with 5 Clusters</span>
 
 ```{r centroid for single linkage 1}
 
@@ -1648,7 +1675,7 @@ cluster_center2_stability = aggregate(Cereals_Preprocess_Randomly[,4:16],list(cl
 
 > We will use the complete linkage method, giving more insights based on the profiling of the clusters.
 
-### Finding Optimal Clusters Number using Height
+### <span style="color: #1c6155;">Finding Optimal Clusters Number using Height</span>
 
 <center>
 
@@ -1695,7 +1722,7 @@ legend(11, legend="Delta = 2.24", bty = "n", text.col = "#1c6155", cex = 0.7)
 
 > Comments: To get our optimal Cluster number, we would get the maximum distance of height in the Dendrogram, that lead us to a **k=3** since the largest delta is **2.24**. 
 
-### Final Cluster Number 
+### <span style="color: #1c6155;">Final Cluster Number </span>
 
 <center>
 
@@ -1713,7 +1740,7 @@ rect.hclust(hc2, k = 3, border = 2:5)
 
 ## d. Elementary public schools
 
-### Find Cluster of "healthy cereals"
+###  <span style="color: #1c6155;">Find Cluster of "healthy cereals"</span>
 
 Healthy Cereals Should have Low Calories, Low Sugars, High Proteins and High Fibers according to **pickyeaterblog.com**
 
@@ -1807,7 +1834,7 @@ DT::datatable(cluster_2_4, caption = "Cluster 4 - Considered Healthy" )
 
 > Comments: First Cluster give us the same product, and cluster 4 give us 9 more cereals that could be considered healthy, we could choose among the best healthy to complete the breakfast of the public school without having to compromise variety. But for this exercice, the official answer would be cluster 1 in our cluster method with k=3. 
 
-### Should be the data normalized?
+### <span style="color: #1c6155;">Should be the data normalized? </span>
 
 > For the hierarchical clustering, we should normalize the dataset since we are dealing with euclidean distances in the process of clustering. Nevertheless, for interpretability, we should get comprehensive data of each members of our clusters, we would use the non-preprocess dataset for so and reajust the number of clusters accordingly to our goal. 
 
