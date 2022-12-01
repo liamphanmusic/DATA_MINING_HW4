@@ -1801,7 +1801,7 @@ DT::datatable(cluster_2_4, caption = "Cluster 4 - Considered Healthy" )
 
 ### <span style="color: #1c6155;">Should be the data normalized? </span>
 
-> For the hierarchical clustering, we should normalize the dataset since we are dealing with euclidean distances in the process of clustering. Nevertheless, for interpretability, we should get comprehensive data of each members of our clusters, we would use the non-preprocess dataset for so and reajust the number of clusters accordingly to our goal. 
+> For the hierarchical clustering, we should normalize the dataset since we are dealing with euclidean distances in the process of clustering. 
 
 
 # <span style="color: #1c6155;">References</span>
